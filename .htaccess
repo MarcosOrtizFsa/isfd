@@ -1,0 +1,24 @@
+#php_flag display_startup_errors on
+#php_flag display_errors on
+#php_flag html_errors on
+RewriteEngine On
+RewriteCond %{HTTP_HOST} ^www\.isfd\.com\.ar [NC]
+RewriteCond %{HTTP_HOST} ^isfd\.com\.ar [NC] 
+RewriteRule ^(.*)$ https://isfd.com.ar/$1 [L,R=301]
+
+RewriteRule ^prod/(.{1,4})/[a-zA-Z0-9_-]+$ 			sistema/index.php?mod=prod&id_system_11=$1
+RewriteRule ^mipanel 						sistema/index.php?mod=login
+RewriteRule ^sistema/([0-9]+)/([a-zA-Z0-9_-]{1,22}+)$ 		sistema/index.php?id_system_01=$1&system_01_modulo=$2
+
+
+RewriteRule ^login/([0-9]{9,10})/(.{38,46})/([0-9]{9,10})$ 	sistema/php/valida.php?rr=$1&cc=$2&tt=$3
+RewriteRule ^nota/([0-9]+)/([a-zA-Z0-9_-]+)$ 			sistema/index.php?mod=leer&id_system_10=$1
+RewriteRule ^carrera/([0-9]+)/([a-zA-Z0-9_-]+)$ 		sistema/index.php?mod=carrera&id_system_11=$1
+RewriteRule ^ofertas/([0-9]+)/([a-zA-Z0-9_-]+)$ 		sistema/index.php?mod=ofertas&rela_system_11d=$1
+RewriteRule ^area/([0-9]+)/([a-zA-Z0-9_-]+)$ 			sistema/index.php?mod=area&id_system_19=$1
+RewriteRule ^area/([0-9]+)/([0-9]+)/([a-zA-Z0-9_-]+)$ 		sistema/index.php?mod=area&id_system_19=$1&rela_system_20=$2
+RewriteRule ^area/([0-9]+)/([0-9]+)/([0-9]+)/([a-zA-Z0-9_-]+)$ 	sistema/index.php?mod=area&id_system_19=$1&rela_system_20=$2&rela_system_21=$3
+RewriteRule ^agrupados/([0-9]+)/([a-zA-Z0-9_-]+)$ 		sistema/index.php?mod=agrupados&rela_system_11d=$1
+RewriteRule ^buscador 						sistema/index.php?mod=buscador
+RewriteRule ^sistema/perfil 					sistema/index.php?mod=perfil
+

@@ -1,0 +1,40 @@
+<div class="fe-page fe-reader-page">
+  <a class="fe-skip-link" href="#noticia-contenido">Saltar al contenido</a>
+
+  <header class="fe-header sticky-top">
+    <nav class="navbar navbar-light" aria-label="Navegación de la noticia">
+      <div class="container">
+        <a class="navbar-brand fe-brand" href="../">
+          <span class="fe-logo"><img src="{PORTAL_LOGO}" alt=""></span>
+          <span>{PORTAL_NOMBRE}</span>
+        </a>
+        <a class="btn btn-outline-primary" href="../#novedades"><i class="bi bi-arrow-left me-2"></i>Volver a novedades</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="noticia-contenido" class="fe-reader-main">
+    <div class="container">
+      <div class="fe-reader-status {ESTADO_CLASE}" role="status">{ESTADO_MENSAJE}</div>
+      <article class="fe-reader-article {NOTICIA_CLASE}">
+        <header class="fe-reader-heading">
+          <span class="fe-badge">{TIPO}</span>
+          <p class="fe-reader-date"><i class="bi bi-calendar3 me-2"></i>{FECHA}</p>
+          <h1>{TITULO}</h1>
+          <p class="fe-reader-lead">{BAJADA}</p>
+        </header>
+        <div class="fe-article-content fe-reader-content">{CONTENIDO}</div>
+        <div class="fe-reader-actions">
+          <a class="btn btn-primary" href="../#novedades"><i class="bi bi-arrow-left me-2"></i>Ver otras novedades</a>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <footer class="fe-footer fe-reader-footer">
+    <div class="container fe-footer-bottom">
+      <span>© {ANIO} {PORTAL_NOMBRE}</span>
+      <span>Tecnología al servicio de la educación, con criterio y responsabilidad.</span>
+    </div>
+  </footer>
+</div>

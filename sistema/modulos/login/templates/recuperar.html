@@ -1,0 +1,22 @@
+
+<form class="row g-3 p-md-4  rounded-1 bg-dark form1" action="#" id="abm" name="abm" style="color: #fff; font-size:11px; padding-bottom:10px; margin-top:20px;">
+	
+
+
+  <div class="col-md-12">
+    <label for="system_04_email" class="form-label">* Email</label>
+    <input type="email" class="form-control" name="system_04_email" id="system_04_email" value="{system_04_email}" required>
+  </div>
+  
+  <div class="col-md-12" >
+		<input name='codigo_captcha' id="codigo_captcha" value='' maxlength="8" type="text" class="form-control form-control-sm" placeholder="Captcha" aria-label="codigo_captcha" style="width:48%; float:left; margin:0px 20px 0px 0px;" required>
+		<img src="php/captcha.php" border="0" style="margin:0px;"/>
+</div>
+							
+	<hr class="my-4">						
+ 
+   <div class="text-light">
+	 {titulo_modulo}
+	</div>
+  <div class="col-10"><button type="button"  onClick="{funcion_verificar}" class="btn btn-success" style=" width:100%;">Recuperar mi clave</button></div><div class="col-2"><button type="button" class="btn btn-danger"  onclick="location.href='../sistema'" style=" width:100%;">X</button></div>	
+</form>

@@ -1,0 +1,3 @@
+# Esta carpeta contiene configuración privada del servidor.
+# Ningún archivo debe ser accesible mediante HTTP.
+Require all denied

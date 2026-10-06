@@ -1,0 +1,41 @@
+<nav class="navbar">
+	  <div class="container">  	
+			<div class="row">
+			  
+			  <div id="content_registrate">
+
+					<form class="row g-1 p-4 rounded-1 bg-dark form1" name="form1" id="form-login" style="width: 320px; color: #fff; margin: 80px auto;" onsubmit="validar_login(this.usu.value,this.cla.value,this.time.value); return false;">
+											
+						<input type="hidden"  id="time" name="time" value="{time}" maxlength="10">
+							<div class="form-floating mb-2">
+								<input type="text" class="form-control dni" id="usu" name="usu" value="{usu}" maxlength="8">
+								<label for="floatingInput" style="color: #000;">DNI:</label>
+							</div>
+							<div class="form-floating mb-2">
+								<input type="password" class="form-control"  id="cla" name="cla" value="{cla}" onKeyPress="return acceptNum_valida(event,form1.usu.value,form1.cla.value,form1.time.value)" maxlength="13">
+								<label for="floatingPassword" style="color: #000;">Clave:</label>
+							</div>
+							<div class="mb-6 form-check">
+								<input type="checkbox" class="form-check-input" id="exampleCheck1" checked="checked"  onclick="{funcion_no_acepto}">
+								<label class="form-check-label" for="exampleCheck1" > S&iacute;, acepto las cookies.</label>
+							 </div>
+							<div class="form-floating mb-6">
+								<button type="submit" class="w-100 btn btn-lg btn-primary">Ingresar</button>
+							</div>
+							<!--<div class="col-md-6">
+								<a class="text-light"  href="javascript:;" onclick="{funcion_registrate}">
+								Registrate Ahora!
+								</a>
+							</div>
+							<div class="col-md-6 text-light">
+								<a class="text-light"  href="javascript:;" onclick="{funcion_recuperar}">
+							  	&iquest;Olvidaste tu clave?
+							 	</a>
+							</div>-->
+												
+					</form>
+				
+			  </div>
+			</div>				
+	  </div>
+</nav>

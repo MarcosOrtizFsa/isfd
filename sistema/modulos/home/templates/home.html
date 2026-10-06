@@ -1,0 +1,106 @@
+<div class="fe-page" id="inicio">
+  <a class="fe-skip-link" href="#contenido-principal">Saltar al contenido principal</a>
+
+  <header class="fe-header sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-light" aria-label="Navegación principal">
+      <div class="container">
+        <a class="navbar-brand fe-brand" href="#inicio" aria-label="{PORTAL_NOMBRE}, inicio">
+          <span class="fe-logo"><img src="{PORTAL_LOGO}" alt=""></span>
+          <span>{PORTAL_NOMBRE}</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#fe-menu" aria-controls="fe-menu" aria-expanded="false" aria-label="Abrir menú">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="fe-menu">
+          <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+            <li class="nav-item"><a class="nav-link" href="#inicio">Inicio</a></li>
+            <li class="nav-item"><a class="nav-link" href="#novedades">Novedades</a></li>
+            <li class="nav-item"><a class="nav-link" href="#buenas-ideas">Buenas Ideas</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main id="contenido-principal">
+    <section class="fe-hero">
+      <div class="container">
+        <div class="row align-items-center g-5">
+          <div class="col-lg-7">
+            <span class="fe-eyebrow">Educación, tecnología y pensamiento crítico</span>
+            <h1>Inteligencia artificial para enseñar, aprender y crear.</h1>
+            <p class="lead">Un espacio para acompañar a docentes y estudiantes de Formosa en el uso de la tecnología y la inteligencia artificial, con ideas prácticas, información y responsabilidad.</p>
+            <div class="d-flex flex-wrap gap-3 mt-4">
+              <a class="btn btn-primary btn-lg" href="#buenas-ideas">Explorar buenas ideas</a>
+              <a class="btn btn-outline-primary btn-lg" href="#novedades">Ver novedades</a>
+            </div>
+          </div>
+          <div class="col-lg-5">
+            <div class="fe-hero-graphic" role="img" aria-label="Ilustración de un libro, ideas y conexiones digitales">
+              <span class="fe-orbit fe-orbit-one"></span><span class="fe-orbit fe-orbit-two"></span>
+              <i class="bi bi-book-half"></i><span class="fe-spark"><i class="bi bi-stars"></i></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="fe-section" id="novedades" aria-labelledby="titulo-novedades">
+      <div class="container">
+        <div class="fe-section-heading">
+          <span class="fe-eyebrow">Para estar al día</span>
+          <h2 id="titulo-novedades">Novedades</h2>
+          <p>Actualidad sobre inteligencia artificial y educación en Argentina y el mundo.</p>
+        </div>
+        {ESTADO_NOVEDADES}
+        <div class="fe-filters {CLASE_CONTENIDO_NOVEDADES}" role="group" aria-label="Filtrar novedades">
+          <button type="button" class="btn fe-filter active" data-filtro="todas" aria-pressed="true">Todas</button>
+          {FILTROS_NOVEDADES}
+        </div>
+        <div class="row g-4 {CLASE_CONTENIDO_NOVEDADES}" id="lista-novedades">{NOVEDADES}</div>
+        <p class="fe-empty d-none" id="sin-novedades" role="status">No hay novedades para este filtro.</p>
+      </div>
+    </section>
+
+    <section class="fe-section fe-section-soft" id="buenas-ideas" aria-labelledby="titulo-ideas">
+      <div class="container">
+        <div class="fe-section-heading">
+          <span class="fe-eyebrow">Para llevar al aula</span>
+          <h2 id="titulo-ideas">Buenas Ideas</h2>
+          <p>Propuestas prácticas para aprovechar la IA en el aula, con objetivos pedagógicos claros.</p>
+        </div>
+        <div class="row g-4">{IDEAS}</div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="fe-footer">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <div class="fe-brand fe-brand-footer"><span class="fe-logo"><img src="{PORTAL_LOGO}" alt=""></span><span>{PORTAL_NOMBRE}</span></div>
+          <p>{PORTAL_DESCRIPCION}</p>
+        </div>
+        <div class="col-6 col-lg-2">
+          <h2 class="h6">Recorré el portal</h2>
+          <a href="#novedades">Novedades</a><a href="#buenas-ideas">Buenas Ideas</a>
+        </div>
+        <div class="col-6 col-lg-3">
+          <h2 class="h6">Contacto</h2>
+          <span>{PORTAL_CORREO}</span><span>{PORTAL_CONTACTO}</span><span>Redes: {PORTAL_REDES}</span>
+        </div>
+      </div>
+      <div class="fe-footer-bottom"><span>© {ANIO} {PORTAL_NOMBRE}</span><span>Tecnología al servicio de la educación, con criterio y responsabilidad.</span></div>
+    </div>
+  </footer>
+
+  <div class="modal fade" id="modal-novedad" tabindex="-1" aria-labelledby="modal-novedad-titulo" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><div><span class="fe-badge" id="modal-novedad-categoria"></span><h2 class="modal-title h4 mt-2" id="modal-novedad-titulo"></h2></div><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div><div class="modal-body"><p class="text-muted" id="modal-novedad-fecha"></p><div id="modal-novedad-estado" class="fe-loading" role="status"></div><div id="modal-novedad-contenido" class="fe-article-content"></div></div></div></div>
+  </div>
+
+  <div class="modal fade" id="modal-idea" tabindex="-1" aria-labelledby="modal-idea-titulo" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><div><span class="fe-level" id="modal-idea-nivel"></span><h2 class="modal-title h4 mt-2" id="modal-idea-titulo"></h2></div><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div><div class="modal-body"><div class="fe-proposal-grid"><section><h3>Objetivo de aprendizaje</h3><p id="modal-idea-objetivo"></p></section><section><h3>Destinatarios</h3><p id="modal-idea-destinatarios"></p></section><section><h3>Materiales necesarios</h3><p id="modal-idea-materiales"></p></section><section class="fe-proposal-wide"><h3>Desarrollo paso a paso</h3><ol id="modal-idea-pasos"></ol></section><section><h3>Papel del docente</h3><p id="modal-idea-docente"></p></section><section><h3>Uso de la IA</h3><p id="modal-idea-ia"></p></section><section><h3>Forma de evaluar</h3><p id="modal-idea-evaluacion"></p></section><section><h3>Cuidados y recomendaciones</h3><p id="modal-idea-cuidados"></p></section></div></div></div></div>
+  </div>
+
+  <script type="application/json" id="fe-datos-ideas">{JSON_IDEAS}</script>
+</div>

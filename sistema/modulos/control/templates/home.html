@@ -1,0 +1,102 @@
+<nav class="navbar navbar-light bg-light">
+  <div class="container">
+	<div class="col-md-3 col-sm-3">
+		<h3>{titulo_modulo}</h3>
+	</div>
+	<div class="col-md-9 col-sm-9">
+	
+			
+			
+				<ul class="nav justify-content-end">
+				 <form name="busqueda"><li class="nav-item">
+					<div class="input-group mb-3">
+					
+					  <input type="text" class="form-control" placeholder="Apellido o DNI" aria-label="Recipient's username" aria-describedby="button-addon2" style="width:150px;" name="variable_buscar" id="variable_buscar" maxlength="22">
+					  <button class="btn btn-outline-secondary" type="button" id="button-addon2" onclick="{funcion_busqueda}"><i class="bi bi-search"></i></button>
+					
+					</div>
+				  </li></form>&nbsp;
+				  <li class="nav-item">
+					<select class="form-select" aria-label="Default select example" style="width:150px;" name="system_estado" id="system_estado" onchange="{funcion_selector_estado}">
+						<option >Estado</option>
+						<option value="0">Pendientes</option>
+						<option value="1">Activos</option>
+						<option value="2">Suspendidos</option>
+					</select>
+				  </li>&nbsp;		
+				  <li class="nav-item">
+					<select class="form-select" aria-label="Default select example" style="width:150px;" name="system_07_priv" id="system_07_priv" onchange="{funcion_selector}">
+					  <option >Tipo</option>
+					  {SECCIONES}
+					</select>
+				  </li>&nbsp;
+				  <li class="nav-item">
+						<button type="button" class="btn btn-secondary" onclick="{funcion_niveles}">Niveles</button>
+				  </li>
+				  
+			
+				</ul>
+	
+				
+			
+		
+
+	</div>  
+  </div>
+</nav>
+
+
+	<div class="container">
+		<div class="row">
+		  
+
+			
+		
+			 <div class="tabl file-mov-ocult">
+				<li class="fil-5 file-mov-50 strong">
+				Id
+				</li>
+				<li class="fil-40 file-mov-50 strong">
+				Nombre y Apellido
+				</li>
+				<li class="fil-20 file-mov-50 strong">
+				Usuario
+				</li>		
+				<li class="fil-15 file-mov-50 strong">
+				Tipo
+				</li>
+				<li class="fil-10 file-mov-50 strong">
+				PreIns.
+				</li>
+				<li class="fil-10 file-mov-50 strong  align-right" >
+				<i onclick="{funcion_agregar}" style="cursor: pointer; float:right;" class="bi bi-plus-circle" title="Agregar nuevo registro"></i>
+				</li>  
+			</div>	 		
+						{LISTADO}
+			<div class="tabl" style="margin-bottom: 100px;">
+				<li class="fil-70">	
+					{PAGINAR}			
+				</li>
+				<li class="fil-20">
+				&nbsp;
+				</li>
+				<li class="fil-10 align-right">
+				{EXCELES}
+				</li> 	
+			</div>
+			
+
+			
+
+
+
+		  
+		</div>
+	</div>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+  <div id="popup_canvas"></div> 
+</div>
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+  <div id="popup_canvas_left"></div> 
+</div>

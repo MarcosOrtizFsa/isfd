@@ -1,0 +1,37 @@
+
+
+
+
+<form name="smp"  method="post" style="margin:10px;">	
+
+	<div class="col-xs-100 col-md-100 col-sm-100">
+		{msj_resultado} <i onClick="{funcion_volver}" class="bi bi-x-square" style=" cursor: pointer; float:right; margin-bottom:5px;"></i>
+	</div>				
+	<div class="col-md-12">
+	<input name='system_04_apellido' id="system_04_apellido" value='{system_04_apellido}' maxlength="33" type="text" class="form-control form-control-lg" placeholder="* Apellido" aria-label="system_04_apellido" style="margin-bottom:10px; width:50%; float:left;" required>
+	<input name='system_04_nombre' id="system_04_nombre" value='{system_04_nombre}' maxlength="44" type="text" class="form-control form-control-lg" placeholder="Nombre" aria-label="system_04_nombre" style="margin-bottom:10px; width:50%; float:left;" required>
+	</div>
+	<div class="col-md-12">
+	<input name="system_04_dni" id="system_04_dni"  value='{system_04_dni}' maxlength="10"  type="text" class="form-control form-control-lg dni" placeholder="* DNI" aria-label="system_04_dni"   onKeyPress="return {funcion_dni_enter}"  style="margin-bottom:10px; width:50%; float:left;" required>
+	<input name='system_04_celular' id="system_04_celular" value='{system_04_celular}'  maxlength="16" type="text" class="form-control form-control-lg phone_arg_whatsapp" placeholder="* Celular" aria-label="system_04_celular"   style="margin-bottom:10px; width:50%; float:left;" required>
+	</div>
+	<div class="col-md-12">
+	<select id="system_04_provincia" name="system_04_provincia" class="form-control"  style="margin-bottom:10px; width:15%; float:left;" >
+		<option value='Formosa'>Fsa.</option>				
+	</select>
+	<input name='system_04_localidad' id="system_04_localidad" value='{system_04_localidad}' maxlength="100" type="text" class="form-control form-control-sm" placeholder="Localidad" aria-label="system_04_localidad" style="margin-bottom:10px; width:35%; float:left;">	
+	<input name='system_04_barrio' id="system_04_barrio" value='{system_04_barrio}' maxlength="44" type="text" class="form-control form-control-sm" placeholder="Barrio" aria-label="system_04_barrio" style="margin-bottom:10px; width:50%; float:left;">
+	
+	</div>
+	<div class="col-md-12">
+	<input name='system_04_direccion' id="system_04_direccion" value='{system_04_direccion}' maxlength="220" type="text" class="form-control form-control-sm" placeholder="Direcci&oacute;n" aria-label="system_04_direccion" style="margin-bottom:10px;">
+	</div>
+	
+	<div class="col-sm-12 col-md-12 col-xl-12 {ver_captcha}" >
+	<input name='codigo_captcha' id="codigo_captcha" value='' maxlength="8" type="text" class="form-control form-control-sm" placeholder="Captcha" aria-label="codigo_captcha" style="margin-bottom:10px; width:120px; float:left;" required>
+	<img src="php/captcha.php" border="0" style="margin:0px;"/>&nbsp;&nbsp;&nbsp;<a href="javascript:location.reload();"   title="Recargar"><i class="bi bi-arrow-repeat"></i></a>
+	</div>
+						
+	<button type="button" class="btn {btn_boton}"  onClick="{funcion_registrar_cliente}" style="width:100%; margin-top:10px; float:left;">{msj_boton}</button>
+	{msj_boton_opciones}
+</form>

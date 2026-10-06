@@ -1,0 +1,6 @@
+# Credenciales privadas utilizadas solamente en desarrollo local.
+/config_private/neuria.local.php
+/data.txt
+
+# Cachés y archivos temporales.
+/cache/

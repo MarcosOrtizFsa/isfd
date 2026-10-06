@@ -1,0 +1,188 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<base href="{dir_base}" />
+<meta name=viewport content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" /> 
+<meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, mustrevalidate">
+<meta http-equiv="Content-Language" content="es">
+<meta name="keywords" content="{system_08_keywords}">
+<meta name="description" content="{system_08_descripcion_site}">
+<meta name="google-site-verification" content="google8b57e8c7a7041114" />
+{script}
+<link rel="stylesheet" href="../css/public_style.css" type="text/css">
+<link rel="stylesheet" href="../css/admin_style.css" type="text/css">
+<link rel="stylesheet" href="../css/estilos_codex.css" type="text/css">
+<!--
+<link rel="stylesheet" href="css/load.css" type="text/css">
+<link rel="stylesheet" href="css/dialog_pup.css" type="text/css">-->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+<!--<link rel="stylesheet" href="../scripts/froala-editor/css/froala_style.css">-->
+
+<script type="text/javascript" src="../scripts/ajax.js"></script>
+<script type="text/javascript" src="../scripts/admin.js"></script>
+<script type="text/javascript" src="../scripts/jquery-1.7.1.js"></script>
+<script type="text/javascript" src="../scripts/load.js"></script>
+<script type="text/javascript" src="../scripts/uploader.js"></script>
+<script type="text/javascript" src="../scripts/codec/jquery.js"></script>
+<script type="text/javascript" src="../scripts/codec/maskaras.js"></script>
+<script type="text/javascript" src="../scripts/public.js"></script>
+<script type="text/javascript" src="../scripts/js_codex.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8" crossorigin="anonymous"></script>
+
+<script>
+$(function() {
+	$('a[href*="#"]:not([href="#"])').click(function() 
+	{
+	  if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
+		var target = $(this.hash);
+		target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
+		if (target.length) {
+		  $('html, body').animate({
+			scrollTop: target.offset().top
+		  }, 1000);
+		  return false;
+		}
+	  }
+	});
+});
+</script>	
+
+
+  
+<style type="text/css" >
+@media (max-width:992px) {
+	.navbar {
+	  position: relative;
+	  display: flex;
+	  flex-wrap: wrap;
+	  align-items: center;
+	  justify-content: space-between;
+	  padding-top: 0px;
+	  padding-bottom: 0px;
+	}
+	.scroll-to-top {
+		position: relative;
+		top: 0px;
+		right: 0px;
+		bottom: 0px;
+		height: 50px;
+		width: 100%;
+		z-index:9;
+		margin:30px 0px 30px 0px;
+	}
+	.carri {
+		height: 35px;
+		width: 35px;
+		opacity: 1;
+		cursor: pointer;
+		margin:0px 5px 0px 5px;
+		float: left;
+	}
+	.card {
+	width: 13rem;
+	}
+}
+
+#wrap-preload{
+  opacity: 1;
+  visibility: visible;
+  transition: opacity .5s ease, visibility .5s ease;
+}
+
+#wrap-preload.close{
+  opacity: 0;
+  visibility: hidden;
+}
+
+.navbar {
+border:0px solid red;
+}
+
+</style>
+<style type="text/css">
+		/*<![CDATA[*/
+		.slide_likebox {
+		float:right;
+		width:288px;
+		height:345px;
+		background: #666;
+		display:block;
+		right:0px;
+		padding:0;
+		position:fixed;
+		top: 130px;
+		z-index:1003;
+		border-radius:10px;
+		-moz-border-radius:10px;
+		-webkit-border-radius:10px;
+		}
+		div.likeboxwrap {
+		margin-top:2px;
+		margin-left:-5px;
+		width:238px;
+		height:325px;
+		background-color:#fff;
+		overflow:hidden;
+		border-radius:10px;
+		-moz-border-radius:10px;
+		-webkit-border-radius:10px;
+		}
+		div.likeboxwrap iframe {margin:-1px}
+		/*]]>*/
+	</style>
+
+
+<title>{system_08_titulo_site}</title>
+</head>
+
+
+  
+<body onLoad="{cargar_inicial}" id="full_scream">
+<div id="carga_page" class="hide"></div>
+<div id="preload" class="hide"></div>
+
+  
+
+  
+<header id="masthead" class="masthead navbar-default {CLASE_SHELL}" {estilo_dinamico}>
+	<nav class="navbar navbar-expand-lg navbar-light ">
+	  <div class="container"> 
+		
+		<a class="navbar-brand" href="../"></a>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+		  <span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarScroll">
+		  <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll">
+			  {print_menu}
+			  {print_opciones}
+			  {print_search}
+		  </ul> 
+		</div>
+		
+	  </div>
+	</nav>
+	</header>
+
+
+	
+																
+	<div id="content_seccion"></div>
+	
+	
+
+  
+	
+	
+	
+
+
+
+
+</body>
+
+<!-- EFECTO BARRA DESPLAZADORA - TIENE FALLAS
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>-->
+</html>
