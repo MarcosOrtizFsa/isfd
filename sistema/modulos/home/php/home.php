@@ -4,8 +4,11 @@
  * Prepara datos seguros y delega toda la presentación a PHPLIB.
  */
 include __DIR__ . '/../../../../lib/template.inc';
+require_once __DIR__ . '/../../../../lib/app.php';
 include __DIR__ . '/datos_home.php';
 include __DIR__ . '/neuria_cliente.php';
+include __DIR__ . '/datos_institucionales.php';
+include __DIR__ . '/ofertas_repositorio.php';
 
 /** Escapa cualquier valor que se imprima como texto o atributo HTML. */
 function home_escapar($valor)
@@ -42,7 +45,7 @@ function home_url_amigable($valor)
 
 $t = new _template(__DIR__ . '/../templates');
 $t->set_file(array(
-    'home' => 'home.html',
+    'home' => 'portal_home.html',
     'tarjeta_novedad' => 'tarjeta_novedad.html',
     'tarjeta_idea' => 'tarjeta_idea.html',
     'filtro_novedad' => 'filtro_novedad.html'
@@ -129,6 +132,43 @@ foreach ($ideas as $idea) {
 $opciones_json = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES |
     JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
 $t->set_var('JSON_IDEAS', json_encode($ideas, $opciones_json));
+
+// Datos institucionales y catálogos de oferta. La integración con NEURIA
+// anterior permanece intacta y alimenta la sección Novedades de esta vista.
+$catalogos = (new OfertasRepositorio(app_db()))->catalogos();
+$crearOpciones = static function (array $items): string {
+    $html = '';
+    foreach ($items as $item) {
+        $html .= '<option value="'.home_escapar($item['codigo']).'">'.home_escapar($item['nombre']).'</option>';
+    }
+    return $html;
+};
+$redes = '';
+foreach (['facebook'=>'Facebook','instagram'=>'Instagram','youtube'=>'YouTube'] as $red=>$etiqueta) {
+    $url = $institucion[$red.'_url'];
+    if ($url !== '') $redes .= '<a href="'.home_escapar($url).'" target="_blank" rel="noopener">'.home_escapar($etiqueta).'</a>';
+}
+$horarios = '';
+foreach ($institucion['horarios'] as $turno=>$horario) $horarios .= '<span><strong>'.home_escapar($turno).':</strong> '.home_escapar($horario).'</span>';
+$t->set_var([
+    'INSTITUCION_NOMBRE' => home_escapar($institucion['nombre']),
+    'INSTITUCION_CORTO' => home_escapar($institucion['nombre_corto']),
+    'INSTITUCION_SIGLA' => home_escapar($institucion['sigla']),
+    'DIRECCION' => home_escapar($institucion['direccion']),
+    'ENTORNO' => home_escapar($institucion['entorno']),
+    'TELEFONO' => home_escapar($institucion['telefono']),
+    'EMAIL' => home_escapar($institucion['email']),
+    'CAMPUS_URL' => home_escapar($institucion['campus_url']),
+    'PREINSCRIPCION_URL' => home_escapar($institucion['preinscripcion_url']),
+    'HERO_IMAGEN' => home_escapar($institucion['hero_imagen']),
+    'INSTITUCIONAL_IMAGEN' => home_escapar($institucion['institucional_imagen']),
+    'MAPA_URL' => home_escapar($institucion['mapa_url']),
+    'HORARIOS' => $horarios,
+    'REDES' => $redes !== '' ? $redes : '<span>Próximamente</span>',
+    'OPCIONES_TIPO' => $crearOpciones($catalogos['tipo'] ?? []),
+    'OPCIONES_TURNO' => $crearOpciones($catalogos['turno'] ?? []),
+    'OPCIONES_ESTADO' => $crearOpciones($catalogos['estado'] ?? []),
+]);
 
 $t->pparse('OUT', 'home');
 ?>
