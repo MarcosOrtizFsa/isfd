@@ -16,7 +16,7 @@ if ($user !== null) {
     }
     foreach ($modules as $module) {
         $path = (string) $module['system_01_path_home'];
-        if (!in_array($path, ['home', 'control', 'root'], true) || ($path === 'root' && $user['mode'] !== 0)) {
+        if (!in_array($path, ['home', 'control', 'ofertas', 'root'], true) || ($path === 'root' && $user['mode'] !== 0)) {
             continue;
         }
         $navigation .= sprintf('<li class="nav-item"><button class="nav-link btn btn-link" data-module="%s" data-module-id="%d">%s</button></li>', app_escape($path), (int) $module['id_system_01'], app_escape($module['system_01_modulo']));
@@ -30,7 +30,7 @@ if ($requestedModule === 'login') {
 } elseif ($requestedModule === 'leer') {
     $initialUrl = 'modulos/home/php/leer.php';
     $initialData['id_system_10'] = filter_input(INPUT_GET, 'id_system_10', FILTER_VALIDATE_INT) ?: 0;
-} elseif ($user !== null && in_array($requestedModule, ['control', 'root'], true)) {
+} elseif ($user !== null && in_array($requestedModule, ['control', 'ofertas', 'root'], true)) {
     if ($requestedModule !== 'root' || $user['mode'] === 0) {
         $initialUrl = 'modulos/' . $requestedModule . '/php/app_home.php';
     }

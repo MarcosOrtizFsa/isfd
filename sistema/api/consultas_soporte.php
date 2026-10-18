@@ -16,7 +16,7 @@ function consulta_recibir(?int $offerId, string $type): never
     if(!$accepted)$errors['acepta_politica']='Debés aceptar el uso de tus datos para responder la consulta.';
     if($errors)app_json(['ok'=>false,'message'=>'Revisá los campos indicados.','errors'=>$errors],422);
     $db=app_db();
-    if($offerId!==null&&!$db->one('SELECT id FROM portal_ofertas_academicas WHERE id=? AND publicada=1','i',[$offerId]))app_json(['ok'=>false,'message'=>'La oferta seleccionada no existe.'],404);
+    if($offerId!==null&&!$db->one("SELECT id FROM ofertas WHERE id=? AND estado_publicacion='publicada' AND deleted_at IS NULL",'i',[$offerId]))app_json(['ok'=>false,'message'=>'La oferta seleccionada no existe.'],404);
     $ip=(string)($_SERVER['REMOTE_ADDR']??'unknown');$ipHash=hash('sha256',$ip.'|'.(getenv('ISFD_APP_SECRET')?:'isfd-local'));
     $recent=(int)($db->one("SELECT COUNT(*) total FROM portal_consultas WHERE ip_hash=? AND created_at>=DATE_SUB(NOW(),INTERVAL 1 HOUR)",'s',[$ipHash])['total']??0);
     if($recent>=5)app_json(['ok'=>false,'message'=>'Alcanzaste el límite de consultas. Intentá nuevamente dentro de una hora.'],429);

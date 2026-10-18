@@ -19,6 +19,7 @@ RewriteRule ^nota/([0-9]+)/([a-zA-Z0-9_-]+)/?$ 		sistema/app_index.php?mod=leer&
 RewriteRule ^api/ofertas-academicas/?$ sistema/api/ofertas.php [QSA,L]
 RewriteRule ^api/ofertas-academicas/([a-z0-9-]+)/?$ sistema/api/oferta.php?slug=$1 [QSA,L]
 RewriteRule ^api/ofertas-academicas/([0-9]+)/consultas/?$ sistema/api/consulta_oferta.php?id=$1 [QSA,L]
+RewriteRule ^api/catalogo/arbol/?$ sistema/api/catalogo_arbol.php [QSA,L]
 RewriteRule ^api/contacto/?$ sistema/api/contacto.php [QSA,L]
 RewriteRule ^carrera/([0-9]+)/([a-zA-Z0-9_-]+)$ 		sistema/index.php?mod=carrera&id_system_11=$1
 RewriteRule ^ofertas/([0-9]+)/([a-zA-Z0-9_-]+)$ 		sistema/index.php?mod=ofertas&rela_system_11d=$1

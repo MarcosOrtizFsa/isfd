@@ -1,10 +1,11 @@
 # ISFD
 
-Portal PHP del ISFD con cuatro modulos funcionales:
+Portal PHP del ISFD con módulos funcionales independientes:
 
 - `home`: portada publica y contenidos provenientes de NEURIA.
 - `login`: autenticacion del equipo administrador.
 - `control`: administracion de usuarios y perfiles.
+- `ofertas`: administración del catálogo académico, publicación y convocatorias.
 - `root`: configuracion interna de modulos, exclusiva del desarrollador root.
 
 ## Requisitos
@@ -59,4 +60,10 @@ node --check scripts/js_codex.js
 ```
 
 La portada se abre en `/` y el acceso administrativo en `/mipanel`.
+
+## Catálogo académico
+
+El árbol de categorías, las reglas de carga, los filtros y las migraciones del
+catálogo están documentados en [docs/CATALOGO.md](docs/CATALOGO.md). El modelo
+entidad-relación se encuentra en [docs/catalogo-er.md](docs/catalogo-er.md).
 
