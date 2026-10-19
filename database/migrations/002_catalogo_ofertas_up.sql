@@ -3,7 +3,7 @@
 
 SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-CREATE TABLE catalogo_niveles (
+CREATE TABLE IF NOT EXISTS catalogo_niveles (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     codigo VARCHAR(30) NOT NULL,
     nombre VARCHAR(100) NOT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE catalogo_niveles (
     KEY idx_catalogo_niveles_filtro (activo, orden)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE catalogo_categorias (
+CREATE TABLE IF NOT EXISTS catalogo_categorias (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nivel_id BIGINT UNSIGNED NOT NULL,
     parent_id BIGINT UNSIGNED NULL,
@@ -41,7 +41,7 @@ CREATE TABLE catalogo_categorias (
     CONSTRAINT fk_catalogo_categorias_parent FOREIGN KEY (parent_id) REFERENCES catalogo_categorias(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE unidades_academicas (
+CREATE TABLE IF NOT EXISTS unidades_academicas (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nivel_id BIGINT UNSIGNED NOT NULL,
     slug VARCHAR(120) NOT NULL,
@@ -56,7 +56,7 @@ CREATE TABLE unidades_academicas (
     CONSTRAINT fk_unidades_academicas_nivel FOREIGN KEY (nivel_id) REFERENCES catalogo_niveles(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE modalidades (
+CREATE TABLE IF NOT EXISTS modalidades (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     codigo VARCHAR(30) NOT NULL,
     nombre VARCHAR(100) NOT NULL,
@@ -68,7 +68,7 @@ CREATE TABLE modalidades (
     KEY idx_modalidades_filtro (activo, orden)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE turnos (
+CREATE TABLE IF NOT EXISTS turnos (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     codigo VARCHAR(30) NOT NULL,
     nombre VARCHAR(100) NOT NULL,
@@ -82,7 +82,7 @@ CREATE TABLE turnos (
     KEY idx_turnos_filtro (activo, orden)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE areas_conocimiento (
+CREATE TABLE IF NOT EXISTS areas_conocimiento (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     slug VARCHAR(120) NOT NULL,
     nombre VARCHAR(150) NOT NULL,
@@ -94,7 +94,7 @@ CREATE TABLE areas_conocimiento (
     KEY idx_areas_conocimiento_filtro (activo, orden)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE ofertas (
+CREATE TABLE IF NOT EXISTS ofertas (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     categoria_id BIGINT UNSIGNED NOT NULL,
     unidad_academica_id BIGINT UNSIGNED NULL,
@@ -132,7 +132,7 @@ CREATE TABLE ofertas (
     CONSTRAINT fk_ofertas_modalidad FOREIGN KEY (modalidad_id) REFERENCES modalidades(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE oferta_turno (
+CREATE TABLE IF NOT EXISTS oferta_turno (
     oferta_id BIGINT UNSIGNED NOT NULL,
     turno_id BIGINT UNSIGNED NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -143,7 +143,7 @@ CREATE TABLE oferta_turno (
     CONSTRAINT fk_oferta_turno_turno FOREIGN KEY (turno_id) REFERENCES turnos(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE oferta_area (
+CREATE TABLE IF NOT EXISTS oferta_area (
     oferta_id BIGINT UNSIGNED NOT NULL,
     area_id BIGINT UNSIGNED NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -154,7 +154,7 @@ CREATE TABLE oferta_area (
     CONSTRAINT fk_oferta_area_area FOREIGN KEY (area_id) REFERENCES areas_conocimiento(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE oferta_convocatorias (
+CREATE TABLE IF NOT EXISTS oferta_convocatorias (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     oferta_id BIGINT UNSIGNED NOT NULL,
     anio SMALLINT UNSIGNED NOT NULL,
@@ -175,7 +175,7 @@ CREATE TABLE oferta_convocatorias (
     CONSTRAINT fk_oferta_convocatorias_oferta FOREIGN KEY (oferta_id) REFERENCES ofertas(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE oferta_documentos (
+CREATE TABLE IF NOT EXISTS oferta_documentos (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     oferta_id BIGINT UNSIGNED NOT NULL,
     tipo ENUM('plan_estudios','resolucion','requisitos','programa','calendario','otro') NOT NULL,
@@ -189,6 +189,12 @@ CREATE TABLE oferta_documentos (
     CONSTRAINT fk_oferta_documentos_oferta FOREIGN KEY (oferta_id) REFERENCES ofertas(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+/*
+ * Los triggers y procedimientos se instalaron originalmente aquí. En hosting
+ * compartido pueden requerir CREATE ROUTINE/TRIGGER y detener toda la carga.
+ * Ahora se ejecutan al final, manualmente, desde
+ * 007_catalogo_integridad_manual_up.sql.
+ *
 DELIMITER $$
 
 CREATE TRIGGER trg_catalogo_categorias_bi
@@ -317,6 +323,7 @@ BEGIN
 END$$
 
 DELIMITER ;
+*/
 
 -- Taxonomías idempotentes.
 INSERT INTO catalogo_niveles (codigo, nombre, descripcion, orden) VALUES
@@ -408,12 +415,41 @@ SELECT id,YEAR(CURDATE()),'',DATE_FORMAT(CURDATE(),'%Y-01-01'),DATE_FORMAT(CURDA
 ON DUPLICATE KEY UPDATE estado=VALUES(estado),observaciones=VALUES(observaciones);
 
 -- Conserva las consultas existentes y las vincula con las ofertas migradas.
-ALTER TABLE portal_consultas DROP FOREIGN KEY fk_consulta_oferta;
+-- El nombre de la FK puede variar entre XAMPP, cPanel y restauraciones parciales.
+SET @fk_consulta_oferta=(
+    SELECT CONSTRAINT_NAME
+    FROM information_schema.KEY_COLUMN_USAGE
+    WHERE TABLE_SCHEMA=DATABASE()
+      AND TABLE_NAME='portal_consultas'
+      AND COLUMN_NAME='oferta_id'
+      AND REFERENCED_TABLE_NAME IS NOT NULL
+    LIMIT 1
+);
+SET @sql_fk_consulta=IF(
+    @fk_consulta_oferta IS NULL,
+    'SELECT 1',
+    CONCAT('ALTER TABLE portal_consultas DROP FOREIGN KEY `',REPLACE(@fk_consulta_oferta,'`','``'),'`')
+);
+PREPARE stmt_fk_consulta FROM @sql_fk_consulta;
+EXECUTE stmt_fk_consulta;
+DEALLOCATE PREPARE stmt_fk_consulta;
 UPDATE portal_consultas c
 JOIN portal_ofertas_academicas antigua ON antigua.id=c.oferta_id
 JOIN ofertas nueva ON nueva.slug=CONCAT('demo-',antigua.slug)
 SET c.oferta_id=nueva.id;
-ALTER TABLE portal_consultas MODIFY oferta_id BIGINT UNSIGNED NULL, ADD COLUMN updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER created_at;
+ALTER TABLE portal_consultas MODIFY oferta_id BIGINT UNSIGNED NULL;
+SET @tiene_consultas_updated_at=(
+    SELECT COUNT(*) FROM information_schema.COLUMNS
+    WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='portal_consultas' AND COLUMN_NAME='updated_at'
+);
+SET @sql_consultas_updated_at=IF(
+    @tiene_consultas_updated_at=0,
+    'ALTER TABLE portal_consultas ADD COLUMN updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER created_at',
+    'SELECT 1'
+);
+PREPARE stmt_consultas_updated_at FROM @sql_consultas_updated_at;
+EXECUTE stmt_consultas_updated_at;
+DEALLOCATE PREPARE stmt_consultas_updated_at;
 ALTER TABLE portal_consultas ADD CONSTRAINT fk_consulta_oferta FOREIGN KEY (oferta_id) REFERENCES ofertas(id) ON DELETE SET NULL;
 
 CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY INVOKER VIEW v_oferta_convocatorias_priorizadas AS

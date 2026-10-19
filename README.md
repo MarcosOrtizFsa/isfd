@@ -73,3 +73,8 @@ entidad-relación se encuentra en [docs/catalogo-er.md](docs/catalogo-er.md).
 El flujo editorial, los estados, la importación controlada y las reglas de
 archivos están documentados en [docs/NOTICIAS.md](docs/NOTICIAS.md).
 
+## Importación en producción
+
+El orden de las migraciones y el último paso manual para hosting compartido se
+detallan en [database/IMPORTACION_PRODUCCION.md](database/IMPORTACION_PRODUCCION.md).
+
