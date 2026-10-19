@@ -6,7 +6,6 @@
 include __DIR__ . '/../../../../lib/template.inc';
 require_once __DIR__ . '/../../../../lib/app.php';
 include __DIR__ . '/datos_home.php';
-include __DIR__ . '/neuria_cliente.php';
 include __DIR__ . '/datos_institucionales.php';
 include __DIR__ . '/ofertas_repositorio.php';
 
@@ -23,7 +22,7 @@ function home_slug($valor)
     return preg_replace('/[^a-z0-9_-]/', '', iconv('UTF-8', 'ASCII//TRANSLIT', $valor));
 }
 
-/** Convierte la fecha técnica de NEURIA en una fecha legible. */
+/** Convierte una fecha de publicación en una fecha legible. */
 function home_fecha($valor)
 {
     try {
@@ -43,6 +42,18 @@ function home_url_amigable($valor)
     return trim($valor, '-') ?: 'noticia';
 }
 
+/** Genera una URL pública estable, incluso si el portal vive en un subdirectorio. */
+function home_url_publica($ruta)
+{
+    $raizProyecto = str_replace('\\', '/', (string) realpath(dirname(__DIR__, 4)));
+    $raizPublica = str_replace('\\', '/', (string) realpath($_SERVER['DOCUMENT_ROOT'] ?? ''));
+    $base = '';
+    if ($raizPublica !== '' && str_starts_with(strtolower($raizProyecto), strtolower($raizPublica))) {
+        $base = substr($raizProyecto, strlen($raizPublica));
+    }
+    return '/' . trim($base . '/' . ltrim((string) $ruta, '/'), '/');
+}
+
 $t = new _template(__DIR__ . '/../templates');
 $t->set_file(array(
     'home' => 'portal_home.html',
@@ -51,22 +62,38 @@ $t->set_file(array(
     'filtro_novedad' => 'filtro_novedad.html'
 ));
 
-// La Home consume solamente contenidos aprobados por NEURIA. Si el servicio
-// todavía no está configurado o falla, el resto del portal continúa disponible.
-$clienteNeuria = new NeuriaCliente();
-$respuestaNeuria = $clienteNeuria->listar(6);
+// La Home consume las noticias que el administrador activó en el módulo Noticias.
 $novedades = array();
-if ($respuestaNeuria['ok']) {
-    foreach ($respuestaNeuria['items'] as $item) {
+try {
+    // Solo se publican noticias activadas por el equipo editorial y cuya fecha ya llegó.
+    $noticiasActivas = app_db()->all(
+        "SELECT n.id, n.titulo, n.bajada, n.seccion,
+                (SELECT a.ruta FROM noticia_archivos a
+                 WHERE a.noticia_id = n.id AND a.tipo = 'imagen' AND a.deleted_at IS NULL
+                 ORDER BY a.orden, a.id LIMIT 1) AS imagen_ruta,
+                COALESCE(n.publicacion_at, n.created_at) AS fecha_publicacion
+         FROM noticias n
+         WHERE n.estado = 'activa'
+           AND n.deleted_at IS NULL
+           AND (n.publicacion_at IS NULL OR n.publicacion_at <= NOW())
+         ORDER BY COALESCE(n.publicacion_at, n.created_at) DESC, n.id DESC
+         LIMIT 6"
+    );
+
+    foreach ($noticiasActivas as $item) {
         $novedades[] = array(
             'id' => (int) $item['id'],
-            'categoria' => $item['tipo'] !== '' ? $item['tipo'] : 'Contenido',
-            'fecha' => home_fecha($item['aprobado'] !== '' ? $item['aprobado'] : $item['actualizado']),
+            'categoria' => trim((string) $item['seccion']) !== '' ? $item['seccion'] : 'Novedades',
+            'fecha' => home_fecha($item['fecha_publicacion']),
             'titulo' => $item['titulo'],
             'resumen' => $item['bajada'],
+            'imagen' => $item['imagen_ruta'] ? home_url_publica($item['imagen_ruta']) : '',
             'icono' => 'bi-newspaper'
         );
     }
+} catch (Throwable $error) {
+    // Una falla de persistencia no debe impedir que cargue el resto del portal.
+    error_log('No fue posible cargar las noticias activas: ' . $error->getMessage());
 }
 
 $estadoNovedades = '';
@@ -91,7 +118,7 @@ $t->set_var(array(
     'IDEAS' => ''
 ));
 
-// Los filtros nacen del campo real `tipo`; la API no entrega categorías.
+// Los filtros nacen de las secciones editoriales de las noticias publicadas.
 $tipos = array_values(array_unique(array_column($novedades, 'categoria')));
 foreach ($tipos as $tipo) {
     $t->set_var(array(
@@ -111,6 +138,10 @@ foreach ($novedades as $novedad) {
         'TITULO_NOVEDAD' => home_escapar($novedad['titulo']),
         'URL_NOVEDAD' => home_escapar(home_url_amigable($novedad['titulo'])),
         'RESUMEN' => home_escapar($novedad['resumen']),
+        'IMAGEN_URL' => home_escapar($novedad['imagen']),
+        'IMAGEN_ALT' => home_escapar('Imagen de ' . $novedad['titulo']),
+        'IMAGEN_CLASE' => $novedad['imagen'] !== '' ? '' : 'd-none',
+        'ICONO_CLASE' => $novedad['imagen'] !== '' ? 'd-none' : '',
         'ICONO' => home_escapar($novedad['icono'])
     ));
     $t->parse('NOVEDADES', 'tarjeta_novedad', true);
@@ -127,14 +158,12 @@ foreach ($ideas as $idea) {
     $t->parse('IDEAS', 'tarjeta_idea', true);
 }
 
-// Solo las buenas ideas locales viajan embebidas. El detalle NEURIA se obtiene
-// desde el endpoint interno y la credencial nunca llega al navegador.
+// Solo las buenas ideas locales viajan embebidas en la portada.
 $opciones_json = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES |
     JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
 $t->set_var('JSON_IDEAS', json_encode($ideas, $opciones_json));
 
-// Datos institucionales y catálogos de oferta. La integración con NEURIA
-// anterior permanece intacta y alimenta la sección Novedades de esta vista.
+// Datos institucionales y catálogos de oferta.
 $catalogos = (new OfertasRepositorio(app_db()))->catalogos();
 $crearOpciones = static function (array $items): string {
     $html = '';

@@ -4,3 +4,7 @@
 
 # Cachés y archivos temporales.
 /cache/
+
+# Contenido editorial cargado en ejecución; se conserva solo la protección web.
+/uploads/noticias/*
+!/uploads/noticias/.htaccess

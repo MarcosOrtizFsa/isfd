@@ -6,6 +6,7 @@ Portal PHP del ISFD con módulos funcionales independientes:
 - `login`: autenticacion del equipo administrador.
 - `control`: administracion de usuarios y perfiles.
 - `ofertas`: administración del catálogo académico, publicación y convocatorias.
+- `noticias`: producción editorial y revisión de contenidos ofrecidos por NEURIA.
 - `root`: configuracion interna de modulos, exclusiva del desarrollador root.
 
 ## Requisitos
@@ -66,4 +67,9 @@ La portada se abre en `/` y el acceso administrativo en `/mipanel`.
 El árbol de categorías, las reglas de carga, los filtros y las migraciones del
 catálogo están documentados en [docs/CATALOGO.md](docs/CATALOGO.md). El modelo
 entidad-relación se encuentra en [docs/catalogo-er.md](docs/catalogo-er.md).
+
+## Noticias y Neuria
+
+El flujo editorial, los estados, la importación controlada y las reglas de
+archivos están documentados en [docs/NOTICIAS.md](docs/NOTICIAS.md).
 

@@ -1,6 +1,7 @@
 -- Revierte exclusivamente la migración 002. Las consultas vuelven al modelo anterior.
 SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
 DROP VIEW IF EXISTS v_catalogo_ofertas;
+DROP VIEW IF EXISTS v_oferta_convocatorias_priorizadas;
 
 ALTER TABLE portal_consultas DROP FOREIGN KEY fk_consulta_oferta;
 -- Las consultas de ofertas creadas solo en el modelo nuevo no tienen un destino

@@ -1,6 +1,9 @@
 <article class="col-md-6 col-xl-4 js-novedad" data-categoria="{CATEGORIA_FILTRO}">
   <div class="fe-card h-100 d-flex flex-column">
-    <div class="fe-card-visual" aria-hidden="true"><i class="bi {ICONO}"></i></div>
+    <div class="fe-card-visual">
+      <img class="fe-card-image {IMAGEN_CLASE}" src="{IMAGEN_URL}" alt="{IMAGEN_ALT}" loading="lazy">
+      <i class="bi {ICONO} {ICONO_CLASE}" aria-hidden="true"></i>
+    </div>
     <div class="p-4 d-flex flex-column flex-grow-1">
       <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
         <span class="fe-badge">{CATEGORIA}</span>

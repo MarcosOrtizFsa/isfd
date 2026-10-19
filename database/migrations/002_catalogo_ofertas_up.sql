@@ -416,7 +416,17 @@ SET c.oferta_id=nueva.id;
 ALTER TABLE portal_consultas MODIFY oferta_id BIGINT UNSIGNED NULL, ADD COLUMN updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER created_at;
 ALTER TABLE portal_consultas ADD CONSTRAINT fk_consulta_oferta FOREIGN KEY (oferta_id) REFERENCES ofertas(id) ON DELETE SET NULL;
 
-CREATE OR REPLACE VIEW v_catalogo_ofertas AS
+CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY INVOKER VIEW v_oferta_convocatorias_priorizadas AS
+SELECT c.*,
+       ROW_NUMBER() OVER (PARTITION BY c.oferta_id ORDER BY
+           CASE c.estado WHEN 'abierta' THEN 0 ELSE 1 END,
+           CASE WHEN c.estado='abierta' THEN c.inscripcion_desde END DESC,
+           CASE WHEN c.estado='programada' THEN COALESCE(c.inscripcion_desde,'9999-12-31') END ASC,
+           c.id DESC) prioridad
+FROM oferta_convocatorias c
+WHERE c.estado IN ('abierta','programada');
+
+CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY INVOKER VIEW v_catalogo_ofertas AS
 SELECT o.id,o.slug,o.titulo,o.resumen,o.descripcion,o.titulo_otorgado,o.perfil_egresado,o.requisitos_ingreso,
        o.duracion_valor,o.duracion_unidad,o.carga_horaria,o.norma_aprobacion,o.imagen_url,o.destacada,
        o.estado_oferta,o.estado_publicacion,o.publicada_at,o.orden,
@@ -432,14 +442,7 @@ JOIN catalogo_categorias c ON c.id=o.categoria_id
 JOIN catalogo_niveles n ON n.id=c.nivel_id
 JOIN modalidades m ON m.id=o.modalidad_id
 LEFT JOIN unidades_academicas u ON u.id=o.unidad_academica_id
-LEFT JOIN oferta_convocatorias cv ON cv.id=(
-    SELECT c2.id FROM oferta_convocatorias c2
-    WHERE c2.oferta_id=o.id AND c2.estado IN ('abierta','programada')
-    ORDER BY CASE c2.estado WHEN 'abierta' THEN 0 ELSE 1 END,
-             CASE WHEN c2.estado='abierta' THEN c2.inscripcion_desde END DESC,
-             CASE WHEN c2.estado='programada' THEN COALESCE(c2.inscripcion_desde,'9999-12-31') END ASC,
-             c2.id DESC LIMIT 1
-)
+LEFT JOIN v_oferta_convocatorias_priorizadas cv ON cv.oferta_id=o.id AND cv.prioridad=1
 WHERE o.estado_publicacion='publicada' AND o.deleted_at IS NULL;
 
 SET @catalogo_migracion=NULL;
