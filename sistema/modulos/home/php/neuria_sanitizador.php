@@ -47,6 +47,32 @@ function neuria_sanitizar_html($html)
     return $salida;
 }
 
+/**
+ * Devuelve contenido legible como texto plano para las cajas de edición.
+ * También normaliza noticias antiguas que se guardaron envueltas en HTML.
+ */
+function neuria_texto_plano_editor($contenido)
+{
+    if (!is_string($contenido) || $contenido === '') {
+        return '';
+    }
+
+    $texto = str_replace(array("\r\n", "\r"), "\n", $contenido);
+    if ($texto === strip_tags($texto)) {
+        return $texto;
+    }
+
+    $texto = preg_replace('#<(script|style|iframe|object|embed|svg|math)\b[^>]*>.*?</\1>#is', '', $texto);
+    $texto = preg_replace('#<br\s*/?>#i', "\n", (string) $texto);
+    $texto = preg_replace('#</(?:p|div|h[1-6]|blockquote|ul|ol)>#i', "\n\n", (string) $texto);
+    $texto = preg_replace('#</li>#i', "\n", (string) $texto);
+    $texto = html_entity_decode(strip_tags((string) $texto), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $texto = preg_replace("/[ \t]+\n/", "\n", $texto);
+    $texto = preg_replace("/\n{3,}/", "\n\n", (string) $texto);
+
+    return trim((string) $texto);
+}
+
 function neuria_limpiar_nodo(DOMNode $nodo, array $permitidas)
 {
     for ($indice = $nodo->childNodes->length - 1; $indice >= 0; $indice--) {

@@ -32,7 +32,9 @@ final class NeuriaSincronizador
     {
         $data=$this->normalizar($item);$exists=$this->db->one('SELECT id FROM noticias WHERE neuria_uuid=?','s',[$data['uuid']]);
         if($exists){$this->actualizarOriginal((int)$exists['id'],$data);$stats['omitidos']++;return;}
-        $this->db->insert("INSERT INTO noticias (neuria_uuid,origen,neuria_estado,neuria_bloqueada,neuria_titulo,neuria_bajada,neuria_contenido,neuria_categoria,neuria_etiquetas,neuria_fuentes,neuria_canal,neuria_generado_at,neuria_disponible_at,neuria_original,neuria_importado_at,neuria_sincronizado_at,titulo,bajada,contenido,seccion,estado) VALUES (?,'neuria',?,0,?,?,?,?,?,?,?,?,?,?,NOW(),NOW(),?,?,?,?,'pendiente')",'ssssssssssssssss',[$data['uuid'],$data['estado'],$data['titulo'],$data['bajada'],$data['contenido'],$data['categoria'],$data['etiquetas'],$data['fuentes'],$data['canal'],$data['generado_at'],$data['disponible_at'],$data['original'],$data['titulo'],$data['bajada'],neuria_sanitizar_html($data['contenido']),$data['categoria']]);$stats['importados']++;
+        // El cuerpo se conserva exactamente como lo entrega NEURIA. La conversión
+        // a HTML seguro ocurre solamente cuando se publica en la portada.
+        $this->db->insert("INSERT INTO noticias (neuria_uuid,origen,neuria_estado,neuria_bloqueada,neuria_titulo,neuria_bajada,neuria_contenido,neuria_categoria,neuria_etiquetas,neuria_fuentes,neuria_canal,neuria_generado_at,neuria_disponible_at,neuria_original,neuria_importado_at,neuria_sincronizado_at,titulo,bajada,contenido,seccion,estado) VALUES (?,'neuria',?,0,?,?,?,?,?,?,?,?,?,?,NOW(),NOW(),?,?,?,?,'pendiente')",'ssssssssssssssss',[$data['uuid'],$data['estado'],$data['titulo'],$data['bajada'],$data['contenido'],$data['categoria'],$data['etiquetas'],$data['fuentes'],$data['canal'],$data['generado_at'],$data['disponible_at'],$data['original'],$data['titulo'],$data['bajada'],$data['contenido'],$data['categoria']]);$stats['importados']++;
     }
 
     private function procesarCambio(mixed $evento,array &$stats):void

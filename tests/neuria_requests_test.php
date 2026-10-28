@@ -10,5 +10,6 @@ try{
     $duplicate=$service->crear($input,1);nr($duplicate['ok']&&$duplicate['duplicada'],'doble envío evitado');
     $sync=$service->sincronizarPendientes();nr($sync['ok']&&$sync['importadas']===1,'solicitud completada e importada');
     $news=$db->one('SELECT * FROM noticias WHERE neuria_uuid=?','s',[$contentId]);nr($news&&$news['estado']==='pendiente'&&$news['estado_revision']==='pendiente'&&$news['neuria_request_id']===$requestId,'nota incorporada como borrador pendiente de revisión');
+    nr($news['contenido']==="Primer párrafo.\n\nSegundo párrafo.",'solicitud importada sin envolver el body con HTML');
     $again=$service->sincronizarPendientes();nr($again['importadas']===0,'solicitud terminal no se importa nuevamente');
 }finally{$db->execute('DELETE FROM noticias WHERE neuria_uuid=?','s',[$contentId]);$db->execute('DELETE FROM neuria_requests WHERE neuria_request_id=?','s',[$requestId]);}

@@ -12,6 +12,8 @@ try{
     $transient=nv1client('transient')->contenidos();nv1($transient['ok']&&$transient['attempts']===2,'recuperación después de error temporal');
     $sync=new NeuriaSincronizador($db,nv1client());$first=$sync->sincronizarContenidos();nv1($first['ok']&&$first['importados']===1,'noticia nueva importada como borrador');
     $row=$db->one('SELECT * FROM noticias WHERE neuria_uuid=?','s',[$uuid]);nv1($row&&$row['estado']==='pendiente'&&$row['titulo']==='Noticia sincronizada','contenido local inicial persistido');$newsId=(int)$row['id'];
+    nv1($row['contenido']==="Primer párrafo.\n\nSegundo párrafo."&&!str_contains($row['contenido'],'<p>'),'body almacenado directamente como texto plano con párrafos');
+    nv1(neuria_texto_plano_editor('<p>Uno</p><p>Dos<br>Tres</p>')==="Uno\n\nDos\nTres",'HTML histórico convertido a texto plano para editar');
     $db->execute("UPDATE noticias SET titulo='Edición local ISFD',contenido='<p>Edición local</p>' WHERE id=?",'i',[$newsId]);$second=$sync->sincronizarContenidos();$row=$db->one('SELECT * FROM noticias WHERE id=?','i',[$newsId]);nv1($second['omitidos']===1&&$row['titulo']==='Edición local ISFD'&&$row['neuria_titulo']==='Noticia sincronizada','duplicado omitido y edición local conservada');
     $cursor=$db->one("SELECT cursor_valor FROM neuria_sincronizaciones WHERE flujo='contenidos'");nv1($cursor['cursor_valor']==='cursor-content-1','cursor persistido después de la página');
     (new NeuriaSincronizador($db,nv1client('suspend')))->sincronizarCambios();$row=$db->one('SELECT estado,neuria_estado FROM noticias WHERE id=?','i',[$newsId]);nv1($row['estado']==='suspendida'&&$row['neuria_estado']==='suspended','suspensión aplicada');

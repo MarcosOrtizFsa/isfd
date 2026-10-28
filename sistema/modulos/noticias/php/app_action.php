@@ -41,22 +41,27 @@ function noticia_archivos_recibidos(): array
 }
 
 $neuriaId=app_int('neuria_id');$title=app_post('titulo');$summary=app_post('bajada');$content=trim((string)($_POST['contenido']??''));$strapline=app_post('volanta');$section=app_post('seccion');$state=app_post('estado')?:'pendiente';$youtubeInput=app_post('youtube');$youtube=noticia_youtube($youtubeInput);$date=app_post('fecha_publicacion');$time=app_post('hora_publicacion');
+$existingRecord=$id?$db->one('SELECT id,origen,neuria_bloqueada FROM noticias WHERE id=?','i',[$id]):null;
+if($id&&!$existingRecord)app_json(['ok'=>false,'message'=>'Noticia inexistente.'],404);
+$isNeuria=($existingRecord['origen']??'')==='neuria'||(!$id&&$neuriaId>0);
 if($title===''||mb_strlen($title)>240||$content==='')app_json(['ok'=>false,'message'=>'Título y texto completo son obligatorios.'],422);
 if(mb_strlen($summary)>600||mb_strlen($strapline)>160||mb_strlen($section)>120||!in_array($state,['pendiente','activa','suspendida'],true))app_json(['ok'=>false,'message'=>'Revisá los campos editoriales.'],422);
 if($youtubeInput!==''&&$youtube===null)app_json(['ok'=>false,'message'=>'Ingresá una URL o código válido de YouTube.'],422);
 $publication=null;if($date!==''||$time!==''){$date=$date?:date('Y-m-d');$time=$time?:'00:00';$parsed=DateTime::createFromFormat('Y-m-d H:i',$date.' '.$time);if(!$parsed||$parsed->format('Y-m-d H:i')!==$date.' '.$time)app_json(['ok'=>false,'message'=>'La fecha u hora de publicación no es válida.'],422);$publication=$parsed->format('Y-m-d H:i:s');}
 if($state==='activa'&&$publication===null)$publication=date('Y-m-d H:i:s');
 if(!$id&&$neuriaId>0)$state='pendiente';
-if($id&&$state==='activa'){$remote=$db->one('SELECT neuria_bloqueada FROM noticias WHERE id=?','i',[$id]);if((int)($remote['neuria_bloqueada']??0)===1)app_json(['ok'=>false,'message'=>'Neuria suspendió o retiró este contenido. No puede publicarse.'],422);}
-$safeContent=neuria_sanitizar_html($content);if($safeContent==='')app_json(['ok'=>false,'message'=>'El texto completo quedó vacío después de validarlo.'],422);
+if($id&&$state==='activa'&&(int)($existingRecord['neuria_bloqueada']??0)===1)app_json(['ok'=>false,'message'=>'Neuria suspendió o retiró este contenido. No puede publicarse.'],422);
+// Las noticias de NEURIA se editan y almacenan como texto plano. Se conservan
+// los saltos dobles entre párrafos y el HTML se genera recién en la portada.
+$storedContent=$isNeuria?neuria_texto_plano_editor($content):neuria_sanitizar_html($content);
+if($storedContent==='')app_json(['ok'=>false,'message'=>'El texto completo quedó vacío después de validarlo.'],422);
 try{$uploads=noticia_archivos_recibidos();}catch(RuntimeException $error){app_json(['ok'=>false,'message'=>$error->getMessage()],422);}
-if($id&&!$db->one('SELECT id FROM noticias WHERE id=?','i',[$id]))app_json(['ok'=>false,'message'=>'Noticia inexistente.'],404);
 if(!$id&&$neuriaId>0&&$db->one('SELECT id FROM noticias WHERE neuria_id=?','i',[$neuriaId]))app_json(['ok'=>false,'message'=>'Esta oferta de Neuria ya fue incorporada.'],409);
 $moved=[];
 try{
-    $id=$db->transaction(function(AppDatabase $database)use($id,$neuriaId,$title,$summary,$safeContent,$strapline,$section,$youtube,$state,$publication,$user,$uploads,&$moved){
-        if($id)$database->execute('UPDATE noticias SET titulo=?,bajada=?,contenido=?,volanta=?,seccion=?,youtube_codigo=?,estado=?,publicacion_at=?,actualizado_por=? WHERE id=?','ssssssssii',[$title,$summary,$safeContent,$strapline,$section,$youtube,$state,$publication,$user['id'],$id]);
-        else $id=$database->insert('INSERT INTO noticias (neuria_id,origen,titulo,bajada,contenido,volanta,seccion,youtube_codigo,estado,publicacion_at,creado_por,actualizado_por) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)','isssssssssii',[$neuriaId>0?$neuriaId:null,$neuriaId>0?'neuria':'local',$title,$summary,$safeContent,$strapline,$section,$youtube,$state,$publication,$user['id'],$user['id']]);
+    $id=$db->transaction(function(AppDatabase $database)use($id,$neuriaId,$title,$summary,$storedContent,$strapline,$section,$youtube,$state,$publication,$user,$uploads,&$moved){
+        if($id)$database->execute('UPDATE noticias SET titulo=?,bajada=?,contenido=?,volanta=?,seccion=?,youtube_codigo=?,estado=?,publicacion_at=?,actualizado_por=? WHERE id=?','ssssssssii',[$title,$summary,$storedContent,$strapline,$section,$youtube,$state,$publication,$user['id'],$id]);
+        else $id=$database->insert('INSERT INTO noticias (neuria_id,origen,titulo,bajada,contenido,volanta,seccion,youtube_codigo,estado,publicacion_at,creado_por,actualizado_por) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)','isssssssssii',[$neuriaId>0?$neuriaId:null,$neuriaId>0?'neuria':'local',$title,$summary,$storedContent,$strapline,$section,$youtube,$state,$publication,$user['id'],$user['id']]);
         if($uploads){$relative='uploads/noticias/'.date('Y/m');$directory=dirname(__DIR__,4).DIRECTORY_SEPARATOR.str_replace('/',DIRECTORY_SEPARATOR,$relative);if(!is_dir($directory)&&!mkdir($directory,0755,true)&&!is_dir($directory))throw new RuntimeException('No se pudo preparar la carpeta de archivos.');foreach($uploads as $index=>$file){$stored=bin2hex(random_bytes(18)).'.'.$file['extension'];$destination=$directory.DIRECTORY_SEPARATOR.$stored;if(!move_uploaded_file($file['tmp'],$destination))throw new RuntimeException('No se pudo guardar uno de los archivos.');$moved[]=$destination;$database->insert('INSERT INTO noticia_archivos (noticia_id,tipo,nombre_original,nombre_guardado,mime_type,tamano_bytes,ruta,orden) VALUES (?,?,?,?,?,?,?,?)','issssisi',[$id,$file['type'],$file['original'],$stored,$file['mime'],$file['size'],$relative.'/'.$stored,$index]);}}
         return $id;
     });
