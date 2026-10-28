@@ -73,6 +73,9 @@ entidad-relación se encuentra en [docs/catalogo-er.md](docs/catalogo-er.md).
 El flujo editorial, los estados, la importación controlada y las reglas de
 archivos están documentados en [docs/NOTICIAS.md](docs/NOTICIAS.md).
 
+La sincronización incremental con la API v1 de Neuria se documenta en
+[docs/NEURIA_V1.md](docs/NEURIA_V1.md).
+
 ## Importación en producción
 
 El orden de las migraciones y el último paso manual para hosting compartido se

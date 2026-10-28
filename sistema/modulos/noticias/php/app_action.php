@@ -11,9 +11,10 @@ if($action==='file_remove'){
     $db->execute('UPDATE noticia_archivos SET deleted_at=NOW() WHERE id=?','i',[$id]);app_log('NOTICIA_ARCHIVO','Archivo '.$id,'OK',$moduleId);app_json(['ok'=>true,'message'=>'Archivo retirado de la noticia.']);
 }
 if(in_array($action,['cycle','archive','restore'],true)){
-    $row=$db->one('SELECT id,estado,deleted_at FROM noticias WHERE id=?','i',[$id]);if(!$row)app_json(['ok'=>false,'message'=>'Noticia inexistente.'],404);
-    if($action==='cycle'){$states=['pendiente'=>'activa','activa'=>'suspendida','suspendida'=>'pendiente'];$next=$states[$row['estado']]??'pendiente';$db->execute("UPDATE noticias SET estado=?,publicacion_at=CASE WHEN ?='activa' THEN COALESCE(publicacion_at,NOW()) ELSE publicacion_at END,actualizado_por=? WHERE id=?",'ssii',[$next,$next,$user['id'],$id]);$message='Estado actualizado a '.$next.'.';}
-    elseif($action==='archive'){$db->execute('UPDATE noticias SET deleted_at=NOW(),actualizado_por=? WHERE id=?','ii',[$user['id'],$id]);$message='Noticia eliminada. Podés restaurarla desde el filtro de eliminados.';}
+    $row=$db->one('SELECT id,estado,deleted_at,neuria_bloqueada FROM noticias WHERE id=?','i',[$id]);if(!$row)app_json(['ok'=>false,'message'=>'Noticia inexistente.'],404);
+    if($action==='cycle'&&(int)$row['neuria_bloqueada']===1)app_json(['ok'=>false,'message'=>'Neuria suspendió o retiró este contenido. No puede publicarse.'],422);
+    if($action==='cycle'){$states=['pendiente'=>'activa','activa'=>'suspendida','suspendida'=>'pendiente'];$next=$states[$row['estado']]??'pendiente';$db->execute("UPDATE noticias SET estado=?,estado_revision=IF(origen='neuria' AND ?='activa','revisada',estado_revision),publicacion_at=CASE WHEN ?='activa' THEN COALESCE(publicacion_at,NOW()) ELSE publicacion_at END,actualizado_por=? WHERE id=?",'sssii',[$next,$next,$next,$user['id'],$id]);$message='Estado actualizado a '.$next.'.';}
+    elseif($action==='archive'){$db->execute("UPDATE noticias SET deleted_at=NOW(),estado_revision=IF(origen='neuria','rechazada',estado_revision),actualizado_por=? WHERE id=?",'ii',[$user['id'],$id]);$message='Noticia eliminada. Podés restaurarla desde el filtro de eliminados.';}
     else{$db->execute("UPDATE noticias SET deleted_at=NULL,estado='pendiente',actualizado_por=? WHERE id=?",'ii',[$user['id'],$id]);$message='Noticia restaurada como pendiente.';}
     app_log('NOTICIA_ESTADO','Noticia '.$id,'OK',$moduleId);app_json(['ok'=>true,'message'=>$message]);
 }
@@ -46,6 +47,7 @@ if($youtubeInput!==''&&$youtube===null)app_json(['ok'=>false,'message'=>'Ingres�
 $publication=null;if($date!==''||$time!==''){$date=$date?:date('Y-m-d');$time=$time?:'00:00';$parsed=DateTime::createFromFormat('Y-m-d H:i',$date.' '.$time);if(!$parsed||$parsed->format('Y-m-d H:i')!==$date.' '.$time)app_json(['ok'=>false,'message'=>'La fecha u hora de publicación no es válida.'],422);$publication=$parsed->format('Y-m-d H:i:s');}
 if($state==='activa'&&$publication===null)$publication=date('Y-m-d H:i:s');
 if(!$id&&$neuriaId>0)$state='pendiente';
+if($id&&$state==='activa'){$remote=$db->one('SELECT neuria_bloqueada FROM noticias WHERE id=?','i',[$id]);if((int)($remote['neuria_bloqueada']??0)===1)app_json(['ok'=>false,'message'=>'Neuria suspendió o retiró este contenido. No puede publicarse.'],422);}
 $safeContent=neuria_sanitizar_html($content);if($safeContent==='')app_json(['ok'=>false,'message'=>'El texto completo quedó vacío después de validarlo.'],422);
 try{$uploads=noticia_archivos_recibidos();}catch(RuntimeException $error){app_json(['ok'=>false,'message'=>$error->getMessage()],422);}
 if($id&&!$db->one('SELECT id FROM noticias WHERE id=?','i',[$id]))app_json(['ok'=>false,'message'=>'Noticia inexistente.'],404);
@@ -59,4 +61,5 @@ try{
         return $id;
     });
 }catch(Throwable $error){foreach($moved as $path)if(is_file($path))@unlink($path);app_json(['ok'=>false,'message'=>$error instanceof mysqli_sql_exception?'No se pudo guardar porque la noticia ya existe.':$error->getMessage()],409);}
+if($state==='activa')$db->execute("UPDATE noticias SET estado_revision=IF(origen='neuria','revisada',estado_revision) WHERE id=?",'i',[$id]);
 app_log('NOTICIA_GUARDAR','Noticia '.$id,'OK',$moduleId);app_json(['ok'=>true,'id'=>$id,'message'=>$neuriaId>0?'Oferta incorporada como noticia pendiente.':'Noticia guardada correctamente.']);
