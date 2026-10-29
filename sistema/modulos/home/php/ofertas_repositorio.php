@@ -118,13 +118,13 @@ final class OfertasRepositorio
 
     private function selectBase(): string
     {
-        return "SELECT v.*,v.nivel_codigo nivel,v.categoria_slug tipo,v.categoria_nombre tipo_nombre,
+        return "SELECT v.*,o.youtube_codigo,v.nivel_codigo nivel,v.categoria_slug tipo,v.categoria_nombre tipo_nombre,
             v.estado_oferta estado,
             CASE v.estado_oferta WHEN 'inscripcion_abierta' THEN 'Inscripción abierta' WHEN 'en_curso' THEN 'En curso' WHEN 'a_termino' THEN 'A término' WHEN 'cerrada' THEN 'Cerrada' ELSE 'Próximamente' END estado_nombre,
             COALESCE((SELECT GROUP_CONCAT(t.codigo ORDER BY t.orden SEPARATOR ',') FROM oferta_turno ot JOIN turnos t ON t.id=ot.turno_id WHERE ot.oferta_id=v.id),'') turno,
             COALESCE((SELECT GROUP_CONCAT(t.nombre ORDER BY t.orden SEPARATOR ', ') FROM oferta_turno ot JOIN turnos t ON t.id=ot.turno_id WHERE ot.oferta_id=v.id),'Sin turno específico') turno_nombre,
             COALESCE((SELECT GROUP_CONCAT(a.slug ORDER BY a.orden SEPARATOR ',') FROM oferta_area oa JOIN areas_conocimiento a ON a.id=oa.area_id WHERE oa.oferta_id=v.id),'') areas
-            FROM v_catalogo_ofertas v";
+            FROM v_catalogo_ofertas v JOIN ofertas o ON o.id=v.id";
     }
 
     private function slug(string $value): string

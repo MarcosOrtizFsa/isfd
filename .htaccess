@@ -16,11 +16,13 @@ RewriteRule ^sistema/([0-9]+)/([a-zA-Z0-9_-]{1,22}+)$ 		sistema/index.php?id_sys
 
 RewriteRule ^login/([0-9]{9,10})/(.{38,46})/([0-9]{9,10})$ 	sistema/php/valida.php?rr=$1&cc=$2&tt=$3
 RewriteRule ^nota/([0-9]+)/([a-zA-Z0-9_-]+)/?$ 		sistema/app_index.php?mod=leer&id_system_10=$1 [QSA,L]
+RewriteRule ^oferta/([a-z0-9-]+)/?$ sistema/app_index.php?mod=oferta&slug=$1 [QSA,L]
 RewriteRule ^api/ofertas-academicas/?$ sistema/api/ofertas.php [QSA,L]
 RewriteRule ^api/ofertas-academicas/([a-z0-9-]+)/?$ sistema/api/oferta.php?slug=$1 [QSA,L]
 RewriteRule ^api/ofertas-academicas/([0-9]+)/consultas/?$ sistema/api/consulta_oferta.php?id=$1 [QSA,L]
 RewriteRule ^api/catalogo/arbol/?$ sistema/api/catalogo_arbol.php [QSA,L]
 RewriteRule ^api/contacto/?$ sistema/api/contacto.php [QSA,L]
+RewriteRule ^api/captcha/?$ sistema/api/captcha.php [QSA,L]
 RewriteRule ^carrera/([0-9]+)/([a-zA-Z0-9_-]+)$ 		sistema/index.php?mod=carrera&id_system_11=$1
 RewriteRule ^ofertas/([0-9]+)/([a-zA-Z0-9_-]+)$ 		sistema/index.php?mod=ofertas&rela_system_11d=$1
 RewriteRule ^area/([0-9]+)/([a-zA-Z0-9_-]+)$ 			sistema/index.php?mod=area&id_system_19=$1

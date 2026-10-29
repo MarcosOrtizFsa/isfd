@@ -9,3 +9,11 @@
 # Contenido editorial cargado en ejecución; se conserva solo la protección web.
 /uploads/noticias/*
 !/uploads/noticias/.htaccess
+/uploads/autoridades/*
+!/uploads/autoridades/.htaccess
+/uploads/ofertas/*
+!/uploads/ofertas/.htaccess
+!/uploads/ofertas/referencia-fac/
+
+# Respaldos de BD y marcadores locales de importación.
+/config_private/*.json

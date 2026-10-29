@@ -16,7 +16,7 @@ if ($user !== null) {
     }
     foreach ($modules as $module) {
         $path = (string) $module['system_01_path_home'];
-        if (!in_array($path, ['home', 'control', 'ofertas', 'noticias', 'root'], true) || ($path === 'root' && $user['mode'] !== 0)) {
+        if (!in_array($path, ['home', 'control', 'ofertas', 'noticias', 'contactos', 'root'], true) || (in_array($path,['root','contactos'],true) && $user['mode'] !== 0)) {
             continue;
         }
         $navigation .= sprintf('<li class="nav-item"><button class="nav-link btn btn-link" data-module="%s" data-module-id="%d">%s</button></li>', app_escape($path), (int) $module['id_system_01'], app_escape($module['system_01_modulo']));
@@ -25,13 +25,18 @@ if ($user !== null) {
 
 $initialUrl = 'modulos/home/php/home.php';
 $initialData = [];
-if ($requestedModule === 'login') {
+// /mipanel sirve tanto el acceso como el panel autenticado. Una vez iniciada
+// la sesión debe cargar el módulo inicial sin cambiar la URL pública del panel.
+if ($requestedModule === 'login' && $user === null) {
     $initialUrl = 'modulos/login/php/app_home.php';
 } elseif ($requestedModule === 'leer') {
     $initialUrl = 'modulos/home/php/leer.php';
     $initialData['id_system_10'] = filter_input(INPUT_GET, 'id_system_10', FILTER_VALIDATE_INT) ?: 0;
-} elseif ($user !== null && in_array($requestedModule, ['control', 'ofertas', 'noticias', 'root'], true)) {
-    if ($requestedModule !== 'root' || $user['mode'] === 0) {
+} elseif ($requestedModule === 'oferta') {
+    $initialUrl = 'modulos/home/php/oferta_leer.php';
+    $initialData['slug'] = preg_replace('/[^a-z0-9-]/', '', strtolower((string) ($_GET['slug'] ?? '')));
+} elseif ($user !== null && in_array($requestedModule, ['control', 'ofertas', 'noticias', 'contactos', 'root'], true)) {
+    if (!in_array($requestedModule,['root','contactos'],true) || $user['mode'] === 0) {
         $initialUrl = 'modulos/' . $requestedModule . '/php/app_home.php';
     }
 }
@@ -42,11 +47,16 @@ if (basename($scriptDirectory) !== 'sistema') {
     $scriptDirectory = rtrim($scriptDirectory, '/') . '/sistema';
 }
 $baseUrl = rtrim($scriptDirectory, '/') . '/';
+require_once __DIR__ . '/../lib/social_metadata.php';
+$social = portal_social_metadata($db, $requestedModule, $initialData, $config, $baseUrl);
 $template = new _template(__DIR__ . '/templates');
 $template->set_file(['layout' => 'app_index.html']);
 $template->set_var([
-    'PAGE_TITLE' => app_escape($config['system_08_titulo_site'] ?? 'ISFD'),
-    'PAGE_DESCRIPTION' => app_escape($config['system_08_descripcion_site'] ?? 'Portal educativo'),
+    'PAGE_TITLE' => app_escape($social['title']),
+    'PAGE_DESCRIPTION' => app_escape($social['description']),
+    'SOCIAL_URL' => app_escape($social['url']),
+    'SOCIAL_IMAGE' => app_escape($social['image']),
+    'SOCIAL_TYPE' => app_escape($social['type']),
     'BASE_URL' => app_escape($baseUrl),
     'CSRF_TOKEN' => app_escape(app_csrf_token()),
     'NAVIGATION' => $navigation,

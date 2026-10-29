@@ -1,41 +1,29 @@
-<div class="fe-page fe-reader-page">
-  <a class="fe-skip-link" href="#noticia-contenido">Saltar al contenido</a>
+<div class="isfd-site isfd-reader-page">
+  <a class="isfd-skip" href="#noticia-contenido">Saltar al contenido principal</a>
+  <div class="isfd-contact-bar"><div class="container d-flex flex-wrap justify-content-between gap-2"><div><a href="tel:{TELEFONO}"><i class="bi bi-telephone-fill"></i> {TELEFONO}</a><a href="mailto:{EMAIL}"><i class="bi bi-envelope-fill"></i> {EMAIL}</a></div><div><a href="{PREINSCRIPCION_URL}" target="_blank" rel="noopener noreferrer">Preinscripción</a><a href="{CAMPUS_URL}" target="_blank" rel="noopener noreferrer">Campus Virtual</a></div></div></div>
 
-  <header class="fe-header sticky-top">
-    <nav class="navbar navbar-light" aria-label="Navegación de la noticia">
-      <div class="container">
-        <a class="navbar-brand fe-brand" href="../">
-          <span class="fe-logo"><img src="{PORTAL_LOGO}" alt=""></span>
-          <span>{PORTAL_NOMBRE}</span>
-        </a>
-        <a class="btn btn-outline-primary" href="../#novedades"><i class="bi bi-arrow-left me-2"></i>Volver a novedades</a>
-      </div>
-    </nav>
-  </header>
+  <header class="isfd-header isfd-detail-header"><nav class="navbar navbar-expand-lg navbar-dark"><div class="container">
+    <a class="navbar-brand isfd-brand" href="../"><span class="isfd-mark"><img src="../image/logo.png" alt="Escudo del Instituto Félix Atilio Cabrera"></span><span><strong>{PORTAL_NOMBRE}</strong><small>{PORTAL_SIGLA} · Formosa</small></span></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#reader-menu" aria-controls="reader-menu" aria-expanded="false" aria-label="Abrir menú"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="reader-menu"><ul class="navbar-nav ms-auto align-items-lg-center"><li class="nav-item"><a class="nav-link" href="../#inicio">Inicio</a></li><li class="nav-item"><a class="nav-link" href="../#instituto">El Instituto</a></li><li class="nav-item"><a class="nav-link" href="../#oferta">Oferta académica</a></li><li class="nav-item"><a class="nav-link active" href="../#novedades">Novedades</a></li><li class="nav-item"><a class="nav-link" href="../#contacto">Contacto</a></li></ul></div>
+  </div></nav></header>
 
-  <main id="noticia-contenido" class="fe-reader-main">
-    <div class="container">
-      <div class="fe-reader-status {ESTADO_CLASE}" role="status">{ESTADO_MENSAJE}</div>
-      <article class="fe-reader-article {NOTICIA_CLASE}">
-        <header class="fe-reader-heading">
-          <span class="fe-badge">{TIPO}</span>
-          <p class="fe-reader-date"><i class="bi bi-calendar3 me-2"></i>{FECHA}</p>
-          <h1>{TITULO}</h1>
-          <p class="fe-reader-lead">{BAJADA}</p>
-        </header>
-        <img class="fe-reader-image {IMAGEN_CLASE}" src="{IMAGEN_URL}" alt="{IMAGEN_ALT}">
-        <div class="fe-article-content fe-reader-content">{CONTENIDO}</div>
-        <div class="fe-reader-actions">
-          <a class="btn btn-primary" href="../#novedades"><i class="bi bi-arrow-left me-2"></i>Ver otras novedades</a>
-        </div>
+  <main id="noticia-contenido" class="isfd-reader-main"><div class="container">
+    <div class="isfd-reader-status {ESTADO_CLASE}" role="status">{ESTADO_MENSAJE}</div>
+    <div class="row g-5 {NOTICIA_CLASE}">
+      <article class="col-lg-8">
+        <nav class="isfd-breadcrumb" aria-label="Migas de pan"><a href="../">Inicio</a><i class="bi bi-chevron-right"></i><a href="../#novedades">Novedades</a><i class="bi bi-chevron-right"></i><span>{TIPO}</span></nav>
+        <header class="isfd-reader-heading"><p class="isfd-reader-kicker">{VOLANTA}</p><h1>{TITULO}</h1><p class="isfd-reader-lead">{BAJADA}</p><div class="isfd-reader-meta"><span class="isfd-reader-badge">{TIPO}</span><time><i class="bi bi-calendar3"></i>{FECHA}</time></div></header>
+        <figure class="isfd-reader-cover {IMAGEN_CLASE}"><img src="{IMAGEN_URL}" alt="{IMAGEN_ALT}"></figure>
+        <div class="isfd-reader-content">{CONTENIDO}</div>
+        {YOUTUBE}
+        <section class="isfd-attachments {ADJUNTOS_CLASE}" aria-labelledby="adjuntos-titulo"><h2 id="adjuntos-titulo">Documentos adjuntos</h2>{ADJUNTOS}</section>
+        <section class="isfd-share" aria-label="Compartir noticia"><strong>Compartí esta noticia</strong><div class="isfd-share-buttons"><button type="button" data-share-network="facebook" aria-label="Compartir en Facebook" title="Compartir en Facebook"><i class="bi bi-facebook"></i></button><button type="button" data-share-network="instagram" aria-label="Compartir en Instagram" title="Compartir en Instagram"><i class="bi bi-instagram"></i></button><button type="button" data-share-network="whatsapp" aria-label="Compartir por WhatsApp" title="Compartir por WhatsApp"><i class="bi bi-whatsapp"></i></button></div><span class="isfd-share-status" aria-live="polite"></span></section>
+        <div class="isfd-reader-actions"><a class="btn btn-outline-dark" href="../#novedades"><i class="bi bi-arrow-left me-2"></i>Volver a novedades</a></div>
       </article>
+      <aside class="col-lg-4 {RELACIONADAS_CLASE}" aria-labelledby="mas-noticias-titulo"><div class="isfd-related-panel"><p class="isfd-reader-kicker">Seguí leyendo</p><h2 id="mas-noticias-titulo">Más noticias</h2><div class="isfd-related-list">{RELACIONADAS}</div><a class="isfd-related-all" href="../#novedades">Ver todas las novedades <i class="bi bi-arrow-right"></i></a></div></aside>
     </div>
-  </main>
+  </div></main>
 
-  <footer class="fe-footer fe-reader-footer">
-    <div class="container fe-footer-bottom">
-      <span>© {ANIO} {PORTAL_NOMBRE}</span>
-      <span>Tecnología al servicio de la educación, con criterio y responsabilidad.</span>
-    </div>
-  </footer>
+  {WHATSAPP_BOTON}<footer class="isfd-footer"><div class="container"><div class="row g-4"><div class="col-lg-4"><div class="isfd-brand mb-3"><span class="isfd-mark"><img src="../image/logo.png" alt=""></span><span><strong>{PORTAL_NOMBRE}</strong><small>{PORTAL_SIGLA}</small></span></div><p>{PIE_TEXTO}</p></div><div class="col-sm-6 col-lg-3"><h2>Dirección</h2><p>{DIRECCION}</p></div><div class="col-sm-6 col-lg-3"><h2>Contacto</h2><p>{TELEFONO}<br><a href="mailto:{EMAIL}">{EMAIL}</a></p></div><div class="col-lg-2">{CONTACTOS_ADICIONALES}<h2>Seguinos en redes</h2><div class="isfd-socials">{REDES}</div></div></div></div><div class="isfd-copyright"><div class="container">© {ANIO} {PORTAL_SIGLA} | Todos los derechos reservados</div></div></footer>
 </div>

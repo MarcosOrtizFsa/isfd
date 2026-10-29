@@ -1,44 +1,19 @@
 <?php
-/** Fuente unica de datos institucionales editables. */
-$institucion = [
-    'nombre' => 'Instituto Superior de Formación Docente Continua y Técnica «Félix Atilio Cabrera»',
-    'nombre_corto' => 'Félix A. Cabrera',
-    'sigla' => 'ISFDCyT F.A.C.',
-    'direccion' => 'Córdoba 1125, Barrio Don Bosco, Formosa Capital, CP 3600',
-    'entorno' => 'Córdoba, Fotheringham, Hipólito Yrigoyen y Fortín Yunká',
-    'telefono' => '03717-430298',
-    'email' => 'ifd.fac@formosa.gov.ar', // Pendiente de confirmación institucional.
-    'jardin' => 'Fortín Yunká 1190',
-    'horarios' => [
-        'Mañana' => '07:15 a 12:30 · Nivel Secundario',
-        'Tarde' => '13:15 a 18:00 · Nivel Primario',
-        'Noche' => '18:45 a 22:30 · Nivel Superior',
-    ],
-    'campus_url' => '/aula/',
-    'preinscripcion_url' => '../#contacto',
-    'revista_url' => 'https://elgrito-fac.com.ar',
-    'facebook_url' => '',
-    'instagram_url' => '',
-    'youtube_url' => '',
-    'mapa_latitud' => '-26.1849',
-    'mapa_longitud' => '-58.1759',
-    'mapa_url' => 'https://www.openstreetmap.org/export/embed.html?bbox=-58.1859%2C-26.1929%2C-58.1659%2C-26.1769&layer=mapnik&marker=-26.1849%2C-58.1759',
-    'hero_imagen' => '../image/hero-instituto-provisorio.png', // Provisoria hasta recibir la foto oficial.
-    'institucional_imagen' => '../image/logo.jpeg',
-];
-
-// Información histórica; se presenta resumida en Home y completa en su vista.
-$historiaInstitucional = [
-    'Nace en el marco del Decreto 1008/75, que organizó los institutos de formación docente de la provincia.',
-    'Fue creado por Decreto 505/78 con los profesorados de Enseñanza Primaria y Educación Física.',
-    'En 1982 se incorporó el Nivel Primario y en 1985 el Nivel Medio.',
-    'Desde 1986 lleva el nombre de Don Félix Atilio Cabrera, referente de la cultura y la educación formoseña.',
-];
-
-// Datos históricos a verificar antes de su publicación definitiva.
-$autoridades = [
-    ['cargo' => 'Director', 'nombre' => 'Prof. Antonio Heraldo Prieto'],
-    ['cargo' => 'Secretario docente', 'nombre' => 'Lic. Juan Claudio Ferreyra'],
-    ['cargo' => 'Secretario contable', 'nombre' => 'Jorge Verón'],
-];
+/** Adaptador para las vistas existentes: todo el contenido institucional viene de BD. */
+require_once __DIR__ . '/../../../../lib/institucional_repositorio.php';
+require_once __DIR__ . '/../../../../lib/portal_institucional.php';
+$institucion = (new InstitucionalRepositorio(app_db()))->actuales();
+$institucion = portal_institucional_configurar($institucion);
+$institucion['horarios'] = [];
+foreach (['manana'=>'Mañana', 'tarde'=>'Tarde', 'noche'=>'Noche'] as $key=>$label) {
+    if (!empty($institucion[$key])) $institucion['horarios'][$label] = $institucion[$key];
+}
+$historiaInstitucional = array_values(array_filter(explode("\n", $institucion['historia_texto'] ?? ''), 'strlen'));
+$autoridades = [];
+foreach (explode("\n", $institucion['autoridades_texto'] ?? '') as $line) {
+    if (str_contains($line, '|')) {
+        [$cargo, $nombre] = array_map('trim', explode('|', $line, 2));
+        $autoridades[] = ['cargo'=>$cargo, 'nombre'=>$nombre];
+    }
+}
 

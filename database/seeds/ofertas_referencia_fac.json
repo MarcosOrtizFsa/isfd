@@ -1,0 +1,117 @@
+[
+  {
+    "source_id": 1,
+    "title": "Profesorado en Inglés",
+    "match": "Profesorado en Inglés",
+    "type": "profesorados",
+    "years": 4,
+    "image": "ingles-big.jpg",
+    "summary": "Formación docente en lengua inglesa, pedagogía y metodologías de enseñanza. Duración informada: cuatro años.",
+    "description": "La propuesta integra formación lingüística, cultural y pedagógica para la enseñanza del inglés en distintos niveles educativos. Incluye didácticas específicas, prácticas docentes y residencia profesional.",
+    "audience": "Personas interesadas en la lengua inglesa y en su enseñanza.",
+    "plans": [
+      [
+        "Primer año",
+        "Alfabetización Académica General\nDidáctica\nAprender, Enseñar y Evaluar con TIC\nPedagogía\nLengua Inglesa I\nFonética y Fonología Inglesa con Práctica en Laboratorio I\nGramática Inglesa I\nGramática Española\nPráctica Docente I"
+      ],
+      [
+        "Segundo año",
+        "Psicología del Aprendizaje\nFilosofía\nSociología de la Educación\nÉtica y Ciudadanía\nFonética y Fonología Inglesa con Práctica en Laboratorio II\nGramática Inglesa II\nDidáctica Especial I\nSujeto de la Educación I\nPráctica Docente II"
+      ],
+      [
+        "Tercer año",
+        "Enseñanza para la Inclusión\nAnálisis de la Realidad Sociocultural de Formosa\nEducación Sexual Integral\nHistoria y Política de la Educación Argentina\nLengua Inglesa III\nDicción de la Lengua Inglesa\nSociedad y Cultura de los Pueblos de Habla Inglesa\nGramática Contrastiva Inglés - Español\nDidáctica Especial II\nSujeto de la Educación II\nPráctica Docente III y Residencia Profesional I"
+      ],
+      [
+        "Cuarto año",
+        "Espacio de Definición Institucional\nGestión y Organización Institucional\nLengua Inglesa IV\nLiteratura de los Pueblos de Habla Inglesa\nLingüística General y Aplicada\nPráctica Docente IV y Residencia Profesional II"
+      ]
+    ]
+  },
+  {
+    "source_id": 2,
+    "title": "Tecnicatura Superior en Desarrollo de Software",
+    "match": "Tecnicatura Superior en Desarrollo de Software",
+    "type": "tecnicaturas-superiores",
+    "years": 3,
+    "image": "software-big.jpg",
+    "summary": "Formación en programación, bases de datos, desarrollo web y proyectos de software. Duración informada: tres años.",
+    "description": "La carrera aborda el diseño y desarrollo de aplicaciones, la gestión de proyectos y el mantenimiento de soluciones informáticas. La descripción de referencia destaca el desarrollo web, la usabilidad y el trabajo con bases de datos y frameworks.",
+    "audience": "Personas interesadas en programación, desarrollo de aplicaciones y tecnología web.",
+    "plans": [
+      [
+        "Primer año",
+        "Primer cuatrimestre:\nTeoría de Sistemas y Organizaciones\nIngeniería de Software\n\nSegundo cuatrimestre:\nArquitectura del Computador y Redes\nBase de Datos I\n\nAnuales:\nCompetencias Comunicativas\nAlgoritmos y Lógicas de Programación\nMatemática I\nInglés Técnico I"
+      ],
+      [
+        "Segundo año",
+        "Primer cuatrimestre:\nProgramación I\nBase de Datos II\n\nSegundo cuatrimestre:\nProbabilidad y Estadística\nProgramación II\n\nAnuales:\nInglés Técnico II\nMatemática II\nAnálisis de Diseño y de Sistema\nPrácticas Profesionalizantes I"
+      ],
+      [
+        "Tercer año",
+        "Primer cuatrimestre:\nDesarrollo Emprendedor\nÉtica y Derecho Informática\n\nSegundo cuatrimestre:\nProyecto de Software y Calidad\nEspacio de Definición Institucional\n\nAnuales:\nAnálisis de la Realidad Social de Formosa\nProgramación III\nPrácticas Profesionales II"
+      ]
+    ]
+  },
+  {
+    "source_id": 3,
+    "title": "Tecnicatura Superior en Administración de Sistemas y Redes",
+    "match": null,
+    "type": "tecnicaturas-superiores",
+    "years": 3,
+    "image": "redes-big.jpg",
+    "summary": "Formación en administración de sistemas informáticos, redes y seguridad de la información. Duración informada: tres años.",
+    "description": "La propuesta abarca configuración y mantenimiento de sistemas, administración de redes, soporte técnico y seguridad informática. Incluye prácticas profesionalizantes y herramientas para resolver problemas de infraestructura tecnológica.",
+    "audience": "Personas interesadas en redes, sistemas informáticos, soporte técnico y seguridad informática.",
+    "plans": [
+      [
+        "Primer año",
+        "Diagramación y Algoritmia I\nDiagramación y Algoritmia II\nAdministración y Teoría de las Organizaciones\nSistemas Operativos I\nArquitectura de las Computadoras\nEstructura de los Ordenadores\nCompetencias Comunicativas\nAnálisis de la Realidad Social de Formosa\nMatemática I\nInglés Técnico I"
+      ],
+      [
+        "Segundo año",
+        "Lenguaje de Programación\nBase de Datos I\nSistemas Operativos II\nSistemas Operativos III\nInstalación y Configuración de Redes I\nInstalación y Configuración de Redes II\nEconomía y Mundo del Trabajo\nInglés Técnico II\nMatemática II\nPráctica Profesionalizante I"
+      ],
+      [
+        "Tercer año",
+        "Base de Datos II\nProbabilidad y Estadística\nSeguridad de Proyectos Informáticos y Redes I\nSeguridad de Proyectos Informáticos y Redes II\nAdministración y Auditoría de Proyectos Informáticos y Redes I\nAdministración y Auditoría de Proyectos Informáticos y Redes II\nÉtica y Ejercicio Profesional\nEspacio de Definición Institucional I\nEspacio de Definición Institucional II\nPráctica Profesionalizante II"
+      ]
+    ]
+  },
+  {
+    "source_id": 4,
+    "title": "Tecnicatura Superior en Administración de Empresas con Orientación a PyMES",
+    "match": null,
+    "type": "tecnicaturas-superiores",
+    "years": 3,
+    "image": "pymes-big.jpg",
+    "summary": "Formación en gestión empresarial orientada a pequeñas y medianas empresas. Duración informada: tres años.",
+    "description": "La propuesta reúne herramientas de contabilidad, finanzas, marketing y recursos humanos, con atención a los desafíos de las pequeñas y medianas empresas. Busca desarrollar capacidades de administración y gestión organizacional.",
+    "audience": "Personas interesadas en administración de empresas, gestión y desarrollo de PyMES.",
+    "plans": []
+  },
+  {
+    "source_id": 5,
+    "title": "Profesorado en Economía",
+    "match": "Profesorado de Educación Secundaria en Economía",
+    "type": "profesorados",
+    "years": 4,
+    "image": "economia-big.jpg",
+    "summary": "Formación docente en economía, con contenidos pedagógicos y disciplinares. Duración informada: cuatro años.",
+    "description": "La carrera combina enseñanza y estudio de teoría económica, políticas fiscales, análisis financiero e interpretación de datos. La propuesta busca desarrollar herramientas para explicar y analizar fenómenos económicos en el ámbito educativo.",
+    "audience": "Personas interesadas en economía y en la enseñanza de sus contenidos.",
+    "plans": []
+  },
+  {
+    "source_id": 6,
+    "title": "Profesorado en Ciencias de la Educación",
+    "match": null,
+    "type": "profesorados",
+    "years": 4,
+    "image": "ciencias_educacion-big.jpg",
+    "summary": "Formación en teorías educativas, pedagogía, aprendizaje y gestión educativa. Duración informada: cuatro años.",
+    "description": "La propuesta integra disciplinas pedagógicas y psicológicas, métodos de enseñanza y desarrollo del aprendizaje. También contempla tecnologías educativas y estrategias para atender la diversidad en el aula.",
+    "audience": "Personas interesadas en educación, pedagogía, procesos de aprendizaje y enseñanza.",
+    "plans": []
+  }
+]

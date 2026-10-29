@@ -26,7 +26,7 @@ if (app_user() !== null) {
 $('#login-form').on('submit', function (event) {
   event.preventDefault();
   var $message = $('#login-message').addClass('d-none');
-  appAction('modulos/login/php/app_login.php', $(this).serialize(), function () { window.location.href = '../sistema'; })
+  appAction('modulos/login/php/app_login.php', $(this).serialize(), function () { window.location.href = '../mipanel'; })
     .fail(function (xhr) { $message.removeClass('d-none').text(xhr.responseJSON ? xhr.responseJSON.message : 'No se pudo iniciar sesion.'); });
 });
 </script>

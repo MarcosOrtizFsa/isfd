@@ -172,11 +172,6 @@ $crearOpciones = static function (array $items): string {
     }
     return $html;
 };
-$redes = '';
-foreach (['facebook'=>'Facebook','instagram'=>'Instagram','youtube'=>'YouTube'] as $red=>$etiqueta) {
-    $url = $institucion[$red.'_url'];
-    if ($url !== '') $redes .= '<a href="'.home_escapar($url).'" target="_blank" rel="noopener">'.home_escapar($etiqueta).'</a>';
-}
 $horarios = '';
 foreach ($institucion['horarios'] as $turno=>$horario) $horarios .= '<span><strong>'.home_escapar($turno).':</strong> '.home_escapar($horario).'</span>';
 $t->set_var([
@@ -193,11 +188,51 @@ $t->set_var([
     'INSTITUCIONAL_IMAGEN' => home_escapar($institucion['institucional_imagen']),
     'MAPA_URL' => home_escapar($institucion['mapa_url']),
     'HORARIOS' => $horarios,
-    'REDES' => $redes !== '' ? $redes : '<span>Próximamente</span>',
     'OPCIONES_TIPO' => $crearOpciones($catalogos['tipo'] ?? []),
     'OPCIONES_TURNO' => $crearOpciones($catalogos['turno'] ?? []),
     'OPCIONES_ESTADO' => $crearOpciones($catalogos['estado'] ?? []),
 ]);
 
+$t->set_var(portal_institucional_variables($institucion));
+require_once __DIR__.'/../../../../lib/videos_institucionales.php';
+$videosInstitucionales=institucional_videos_publicos($institucion['videos_json']??'[]');
+$videoGaleria='';
+if ($videosInstitucionales) {
+    $first=$videosInstitucionales[0];
+    $single=count($videosInstitucionales)===1;
+    $videoGaleria='<div class="institutional-videos" data-institutional-videos="'.home_escapar(json_encode($videosInstitucionales,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES)).'" data-index="0">'
+        .'<div class="ratio ratio-16x9" data-institutional-player><iframe src="'.home_escapar($first['url']).'" title="'.home_escapar($first['titulo']).'" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe></div>'
+        .'<div class="institutional-video-caption"><h3 class="h6 mb-1" data-institutional-title>'.home_escapar($first['titulo']).'</h3><a data-institutional-external href="'.home_escapar($first['url']).'" target="_blank" rel="noopener noreferrer">Abrir video aparte</a></div>'
+        .'<div class="institutional-video-controls'.($single?' d-none':'').'"><button type="button" class="btn btn-outline-dark btn-sm" data-institutional-step="-1" aria-label="Video anterior">← Anterior</button><span data-institutional-counter role="status" aria-live="polite">1 / '.count($videosInstitucionales).'</span><button type="button" class="btn btn-outline-dark btn-sm" data-institutional-step="1" aria-label="Video siguiente">Siguiente →</button></div></div>';
+} else {
+    $videoGaleria='<div class="isfd-media" style="background-image:url(\''.home_escapar($institucion['institucional_imagen']).'\')"><span>Conocé el instituto</span></div>';
+}
+$t->set_var('VIDEOS_INSTITUCIONALES',$videoGaleria);
+$historiaHtml = implode('', array_map(static fn($p)=>'<p>'.home_escapar($p).'</p>', $historiaInstitucional));
+$autoridadesHtml = '';
+require_once __DIR__.'/../../../../lib/autoridades.php';
+foreach (app_db()->all('SELECT * FROM institucional_autoridades WHERE visible=1 ORDER BY orden,id') as $persona) {
+    $nombre = trim($persona['nombre'].' '.$persona['apellido']);
+    $initials = mb_strtoupper(mb_substr($persona['nombre'],0,1).mb_substr($persona['apellido'],0,1));
+    $media = $persona['imagen_url'] !== ''
+        ? '<img src="'.home_escapar($persona['imagen_url']).'" alt="'.home_escapar($nombre).'" loading="lazy">'
+        : '<span class="authority-initials" aria-hidden="true">'.home_escapar($initials).'</span>';
+    try { $videoUrl=autoridad_video($persona['video_url'] ?: $persona['youtube_codigo']); }
+    catch (InvalidArgumentException $error) { $videoUrl=''; }
+    $video = $videoUrl !== ''
+        ? '<button type="button" class="authority-play" data-authority-video="'.home_escapar($videoUrl).'" data-authority-name="'.home_escapar($nombre).'" aria-label="Ver saludo de '.home_escapar($nombre).'"><i class="bi bi-play-fill" aria-hidden="true"></i></button>' : '';
+    $autoridadesHtml .= '<article class="authority-card"><div class="authority-media">'.$media.$video.'</div><div class="authority-body"><p class="authority-role">'.home_escapar($persona['cargo']).'</p><h3>'.home_escapar($nombre).'</h3><p class="authority-profession">'.home_escapar($persona['profesion']).'</p><p class="authority-description">'.nl2br(home_escapar($persona['descripcion'])).'</p></div></article>';
+}
+$t->set_var([
+    'HERO_ETIQUETA'=>home_escapar($institucion['hero_etiqueta']??''),
+    'HERO_TITULO'=>home_escapar($institucion['hero_titulo']??''),
+    'HERO_NOMBRE'=>home_escapar($institucion['hero_nombre']??''),
+    'HERO_DESCRIPCION'=>home_escapar($institucion['hero_descripcion']??''),
+    'HISTORIA_TITULO'=>home_escapar($institucion['historia_titulo']??''),
+    'HISTORIA_RESUMEN'=>nl2br(home_escapar($institucion['historia_resumen']??'')),
+    'HISTORIA_COMPLETA'=>$historiaHtml,
+    'AUTORIDADES'=>$autoridadesHtml,
+    'AUTORIDADES_CLASE'=>$autoridadesHtml===''?'d-none':'',
+]);
 $t->pparse('OUT', 'home');
 ?>

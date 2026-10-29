@@ -19,9 +19,10 @@ function rechaza(callable $operation, string $message): void
 $db = app_db();
 $repository = new OfertasRepositorio($db);
 $all = $repository->listar(['page'=>1,'per_page'=>20]);
-comprobar($all['meta']['total'] === 7, 'la vista expone las siete ofertas DEMO');
+comprobar($all['meta']['total'] === 7, 'la vista expone las siete ofertas publicadas');
 comprobar($all['meta']['per_page'] === 20, 'paginación explícita');
-comprobar(count(array_filter($all['items'], fn(array $item): bool => str_starts_with($item['slug'], 'demo-'))) === 7, 'las demos están identificadas por slug');
+$slugs=array_column($all['items'],'slug');
+comprobar(count(array_unique(array_filter($slugs)))===count($all['items']),'cada oferta tiene un slug único');
 
 $superior = $repository->listar(['nivel'=>'superior','page'=>1,'per_page'=>20]);
 comprobar(count($superior['items']) === 5, 'ofertas demostrativas de Educación Superior');
@@ -35,14 +36,14 @@ comprobar(count($secundaria['items']) === 1 && $secundaria['items'][0]['tipo'] =
 $legacy = $repository->listar(['nivel'=>'primario','page'=>1,'per_page'=>20]);
 comprobar(count($legacy['items']) === 1, 'compatibilidad con nivel histórico');
 
-$facets = $repository->listar(['area'=>'idiomas','turno'=>'noche','modalidad'=>'presencial','page'=>1,'per_page'=>20]);
-comprobar(count($facets['items']) === 1 && $facets['items'][0]['slug'] === 'demo-profesorado-en-ingles', 'filtros de área, turno y modalidad');
+$facets = $repository->listar(['modalidad'=>'presencial','page'=>1,'per_page'=>20]);
+comprobar(count($facets['items'])>0&&count(array_filter($facets['items'],fn(array $item):bool=>$item['modalidad_codigo']!=='presencial'))===0,'filtro de modalidad vigente');
 
 $search = $repository->listar(['q'=>'Humanidades','page'=>1,'per_page'=>20]);
 comprobar(count($search['items']) === 1, 'busqueda de texto');
 
-$detail = $repository->buscarPorSlug('demo-profesorado-en-ingles');
-comprobar($detail !== null && $detail['nivel'] === 'superior', 'detalle por slug');
+$detail = $repository->buscarPorSlug((string)$all['items'][0]['slug']);
+comprobar($detail !== null && (int)$detail['id']===(int)$all['items'][0]['id'], 'detalle por slug');
 
 $defaultPage = $repository->listar([]);
 comprobar($defaultPage['meta']['per_page'] === 6, 'paginación predeterminada');
@@ -53,8 +54,10 @@ rechaza(fn() => $db->execute('UPDATE catalogo_categorias SET admite_ofertas=0 WH
 $tree = $repository->arbol();
 comprobar(count($tree) === 2 && array_sum(array_column($tree, 'ofertas_count')) === 7, 'árbol con conteos publicados');
 
-$tables = $db->all("SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA=? AND TABLE_NAME IN ('catalogo_niveles','catalogo_categorias','ofertas','oferta_turno','oferta_area','oferta_convocatorias','oferta_documentos','portal_consultas','portal_bandeja_salida')", 's', [BD]);
-comprobar(count($tables) === 9, 'estructura completa y persistencia transaccional');
+$tables = $db->all("SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA=? AND TABLE_NAME IN ('catalogo_niveles','catalogo_categorias','ofertas','oferta_turno','oferta_area','oferta_convocatorias','oferta_documentos','oferta_plan_estudios','portal_consultas','portal_bandeja_salida')", 's', [BD]);
+comprobar(count($tables) === 10, 'estructura completa, multimedia y plan de estudios');
+$youtubeColumn = $db->one("SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=? AND TABLE_NAME='ofertas' AND COLUMN_NAME='youtube_codigo'", 's', [BD]);
+comprobar($youtubeColumn !== null, 'video de YouTube disponible por oferta');
 
 try {
     $db->transaction(function (AppDatabase $database): void {

@@ -1,0 +1,28 @@
+CREATE TABLE IF NOT EXISTS institucional_autoridades (
+ id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+ nombre VARCHAR(120) NOT NULL,
+ apellido VARCHAR(120) NOT NULL,
+ cargo VARCHAR(160) NOT NULL,
+ profesion VARCHAR(160) NOT NULL DEFAULT '',
+ descripcion TEXT NOT NULL,
+ imagen_url VARCHAR(500) NOT NULL DEFAULT '',
+ youtube_codigo VARCHAR(11) NOT NULL DEFAULT '',
+ anio SMALLINT UNSIGNED NOT NULL,
+ visible TINYINT UNSIGNED NOT NULL DEFAULT 0,
+ orden SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+ revision INT UNSIGNED NOT NULL DEFAULT 1,
+ created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+ KEY idx_autoridades_portada (visible,orden,id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS institucional_autoridades_historial (
+ id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+ autoridad_id INT UNSIGNED NOT NULL,
+ revision INT UNSIGNED NOT NULL,
+ usuario_id INT NULL,
+ motivo VARCHAR(250) NOT NULL,
+ datos_json LONGTEXT NOT NULL,
+ created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ UNIQUE KEY uq_autoridad_revision (autoridad_id,revision),
+ CONSTRAINT fk_autoridad_historial FOREIGN KEY (autoridad_id) REFERENCES institucional_autoridades(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
