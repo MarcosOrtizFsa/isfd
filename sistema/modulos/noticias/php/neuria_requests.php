@@ -19,7 +19,8 @@ final class NeuriaSolicitudes
 
     public function sincronizarPendientes():array
     {
-        $rows=$this->db->all("SELECT * FROM neuria_requests WHERE status NOT IN ('COMPLETADA','PARCIALMENTE_COMPLETADA','ERROR','CANCELADA') ORDER BY id");$stats=['consultadas'=>0,'actualizadas'=>0,'importadas'=>0,'errores'=>0];
+        // ERROR puede recuperarse mediante un reintento en NEURIA: seguimos consultándolo.
+        $rows=$this->db->all("SELECT * FROM neuria_requests WHERE status NOT IN ('COMPLETADA','PARCIALMENTE_COMPLETADA','CANCELADA') ORDER BY id");$stats=['consultadas'=>0,'actualizadas'=>0,'importadas'=>0,'errores'=>0];
         foreach($rows as $row){$stats['consultadas']++;try{$this->sincronizarUna($row,$stats);}catch(Throwable $e){$stats['errores']++;$this->db->execute('UPDATE neuria_requests SET error_message=? WHERE id=?','si',[mb_substr($e->getMessage(),0,500),(int)$row['id']]);}}
         return ['ok'=>$stats['errores']===0]+$stats;
     }
@@ -28,7 +29,8 @@ final class NeuriaSolicitudes
     {
         $response=$this->client->solicitud((string)$row['neuria_request_id']);if(!$response['ok'])throw new RuntimeException('API '.$response['error'].' (HTTP '.$response['http_code'].')');$data=is_array($response['data'])?$response['data']:[];$status=strtoupper((string)($data['status']??''));if($status==='')throw new RuntimeException('Respuesta de solicitud sin estado.');$progress=max(0,min(100,(int)($data['progress']??0)));$terminal=in_array($status,self::TERMINALES,true);
         $this->db->transaction(function()use($row,$data,$status,$progress,$terminal,&$stats){
-            $this->db->execute('UPDATE neuria_requests SET status=?,progress=?,response_payload=?,error_message=?,completed_at=IF(?,COALESCE(completed_at,NOW()),completed_at) WHERE id=?','sissii',[$status,$progress,json_encode($data,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES),$status==='ERROR'?mb_substr((string)($data['error_message']??'Error informado por Neuria'),0,500):null,$terminal?1:0,(int)$row['id']]);$stats['actualizadas']++;
+            // Al reabrirse, limpiar tanto el error como la fecha de cierre del intento anterior.
+            $this->db->execute('UPDATE neuria_requests SET status=?,progress=?,response_payload=?,error_message=?,completed_at=IF(?,COALESCE(completed_at,NOW()),NULL) WHERE id=?','sissii',[$status,$progress,json_encode($data,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES),$status==='ERROR'?mb_substr((string)($data['error_message']??'Error informado por Neuria'),0,500):null,$terminal?1:0,(int)$row['id']]);$stats['actualizadas']++;
             if(!in_array($status,['COMPLETADA','PARCIALMENTE_COMPLETADA'],true))return;
             foreach((array)($data['destinations']??[]) as $destination){if(!is_array($destination)||strtoupper((string)($destination['status']??''))!=='COMPLETADA')continue;$contentId=trim((string)($destination['content_id']??''));if($contentId==='')continue;$content=$this->client->contenido($contentId);if(!$content['ok']||!is_array($content['data']))throw new RuntimeException('No se pudo descargar contenido '.$contentId);$result=(new NeuriaSincronizador($this->db,$this->client))->importarContenido($content['data']);$this->db->execute("UPDATE noticias SET neuria_request_id=?,estado_revision='pendiente',imported_at=COALESCE(imported_at,NOW()) WHERE neuria_uuid=?",'ss',[(string)$row['neuria_request_id'],$contentId]);$stats['importadas']+=$result['importados'];}
         });
