@@ -17,3 +17,8 @@
 
 # Respaldos de BD y marcadores locales de importación.
 /config_private/*.json
+
+# Dependencias y registros locales del servidor del chat.
+/chat/server/vendor/
+/chat/server/*.log
+/chat/server/*.pid

@@ -1,4 +1,11 @@
 (function(){'use strict';
+  // Reutiliza la ventana del chat; si el navegador bloquea el popup, sigue el enlace normal.
+  document.addEventListener('click', function (event) {
+    var link = event.target.closest('[data-institutional-chat]');
+    if (!link || event.ctrlKey || event.metaKey || event.shiftKey || event.button !== 0) return;
+    var chatWindow = window.open(link.href, 'isfdComunidad', 'popup=yes,width=1180,height=820,resizable=yes,scrollbars=yes');
+    if (chatWindow) { chatWindow.opener = null; chatWindow.focus(); event.preventDefault(); }
+  });
   var timer,page=1,lastPage=1,level='',currentOfferId=0;
   function one(s){return document.querySelector(s)}
   function escapeHtml(v){var d=document.createElement('div');d.textContent=v||'';return d.innerHTML}

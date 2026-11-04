@@ -42,12 +42,12 @@ function portal_institucional_variables(array $data): array
     $mobile = trim((string) ($data['celular'] ?? ''));
     if ($mobile !== '') $contacts .= '<p class="mb-2">Celular: <a href="tel:'.app_escape(preg_replace('/[^0-9+]/', '', $mobile)).'">'.app_escape($mobile).'</a></p>';
     $number = preg_replace('/\D/', '', (string) ($data['whatsapp'] ?? ''));
-    $whatsapp = '';
+    $chatButton = '<a class="isfd-chat" data-institutional-chat href="../chat/" target="_blank" rel="noopener" aria-label="Abrir chat institucional en otra ventana" title="Chat institucional"><i class="bi bi-chat-dots" aria-hidden="true"></i><span>Chat institucional</span></a>';
     if (preg_match('/^[1-9][0-9]{7,14}$/', $number)) {
         $url = 'https://wa.me/' . $number;
         $contacts .= '<p class="mb-2"><a href="'.$url.'" target="_blank" rel="noopener noreferrer"><i class="bi bi-whatsapp me-1"></i>WhatsApp: '.app_escape($data['whatsapp']).'</a></p>';
-        $whatsapp = '<a class="isfd-chat" href="'.$url.'" target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp" title="Contactar por WhatsApp"><i class="bi bi-whatsapp"></i></a>';
     }
     if (!empty($data['contactos_visibles'])) $contacts .= '<p>'.nl2br(app_escape($data['contactos_visibles'])).'</p>';
-    return ['REDES'=>$socials, 'CONTACTOS_ADICIONALES'=>$contacts, 'WHATSAPP_BOTON'=>$whatsapp, 'PIE_TEXTO'=>app_escape($data['pie_texto']??'')];
+    // La clave histórica se conserva para las plantillas PHPLIB de portada, notas y ofertas.
+    return ['REDES'=>$socials, 'CONTACTOS_ADICIONALES'=>$contacts, 'WHATSAPP_BOTON'=>$chatButton, 'PIE_TEXTO'=>app_escape($data['pie_texto']??'')];
 }
