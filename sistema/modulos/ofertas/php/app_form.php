@@ -17,7 +17,9 @@ function oferta_label(string $titulo,string $ayuda,bool $obligatorio=false,strin
 $db=app_db();$id=app_int('id');
 $record=$id?$db->one('SELECT * FROM ofertas WHERE id=?','i',[$id]):null;
 if($id&&!$record){http_response_code(404);exit('Oferta inexistente.');}
-$categories=$db->all('SELECT c.id,c.nombre,n.nombre nivel FROM catalogo_categorias c JOIN catalogo_niveles n ON n.id=c.nivel_id WHERE c.activo=1 AND c.admite_ofertas=1 ORDER BY n.orden,c.nombre');
+$categories=$db->all("SELECT c.id,CONCAT(c.nombre,IF(c.activo=1,'',' (inactiva)')) nombre,n.nombre nivel
+    FROM catalogo_categorias c JOIN catalogo_niveles n ON n.id=c.nivel_id
+    WHERE (c.activo=1 AND c.admite_ofertas=1) OR c.id=? ORDER BY n.orden,c.nombre", 'i', [(int)($record['categoria_id']??0)]);
 $units=$db->all('SELECT id,nombre FROM unidades_academicas WHERE activo=1 ORDER BY nombre');
 $modalities=$db->all('SELECT id,nombre FROM modalidades WHERE activo=1 ORDER BY orden');
 $call=$id?$db->one("SELECT * FROM oferta_convocatorias WHERE oferta_id=? ORDER BY CASE estado WHEN 'abierta' THEN 0 WHEN 'programada' THEN 1 ELSE 2 END,anio DESC,id DESC LIMIT 1",'i',[$id]):null;

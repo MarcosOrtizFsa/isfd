@@ -15,6 +15,14 @@ $stateLabels=['pendiente'=>'Pendiente','activa'=>'Activa','suspendida'=>'Suspend
 ?>
 <section class="admin-page"><div class="container-fluid px-3 px-lg-4">
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4"><div><h1 class="h3 mb-1">Noticias</h1><p class="text-secondary mb-0">Producción editorial propia y contenidos ofrecidos por Neuria.</p></div><div class="d-flex gap-2"><button class="btn btn-outline-primary" onclick="cargar_post('modulos/noticias/php/app_neuria_form.php','news-panel','')"><i class="bi bi-stars me-2"></i>AGENTE IA</button><button class="btn btn-primary" onclick="cargar_post('modulos/noticias/php/app_form.php','news-panel','')"><i class="bi bi-plus-lg me-2"></i>Nueva noticia</button></div></div>
+<div id="news-neuria-status" class="border rounded p-3 mb-3 d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div role="status" aria-live="polite" aria-atomic="true">
+        <span class="badge text-bg-secondary" data-neuria-badge>NEURIA · Comprobando…</span>
+        <span class="small ms-2" data-neuria-message>Verificando conexión y credenciales.</span>
+        <small class="d-block text-secondary mt-1" data-neuria-time></small>
+    </div>
+    <button type="button" class="btn btn-sm btn-outline-secondary" data-neuria-check disabled><i class="bi bi-arrow-repeat me-1"></i>Volver a comprobar</button>
+</div>
 <?php if($syncError):?><div class="alert alert-warning"><i class="bi bi-cloud-slash me-2"></i>La última sincronización de Neuria informó un error. Las noticias locales continúan operativas.</div><?php endif;?>
 <?php if($syncStates):?><div class="row g-2 mb-3"><?php foreach($syncStates as $syncState):?><div class="col-md-6"><div class="border rounded p-2 small"><strong><?=app_escape(ucfirst($syncState['flujo']))?></strong> · último éxito: <?=app_escape($syncState['ultimo_exito_at']?:'Nunca')?> · recibidos: <?=(int)$syncState['recibidos']?> · importados: <?=(int)$syncState['importados']?></div></div><?php endforeach;?></div><?php endif;?>
 <form id="news-filter" class="card admin-card mb-4"><div class="card-body"><div class="row g-2 align-items-end"><div class="col-lg-6"><label class="form-label">Buscar</label><input class="form-control" name="q" value="<?=app_escape($q)?>" placeholder="Título, bajada o volanta"></div><div class="col-md-4 col-lg-3"><label class="form-label">Estado</label><select class="form-select" name="estado"><option value="">Todos</option><option value="neuria" <?=$state==='neuria'?'selected':''?>>Importadas de Neuria</option><?php foreach($stateLabels as $value=>$label):?><option value="<?=$value?>" <?=$state===$value?'selected':''?>><?=$label?></option><?php endforeach;?></select></div><div class="col-md-4 col-lg-2"><label class="form-label">Registros</label><select class="form-select" name="eliminadas"><option value="0" <?=$deleted?'':'selected'?>>Activos</option><option value="1" <?=$deleted?'selected':''?>>Eliminados</option></select></div><div class="col-md-4 col-lg-1"><button class="btn btn-outline-primary w-100"><i class="bi bi-search"></i></button></div></div></div></form>
@@ -24,4 +32,40 @@ $stateLabels=['pendiente'=>'Pendiente','activa'=>'Activa','suspendida'=>'Suspend
 <?php if(!$news):?><tr><td colspan="6" class="text-center text-secondary py-5">No se encontraron noticias.</td></tr><?php endif;?>
 <?php foreach($news as $item):$isDeleted=$item['deleted_at']!==null;?><tr><td data-label="Noticia"><strong><?=app_escape($item['titulo'])?></strong><small class="d-block text-secondary text-truncate" style="max-width:38rem"><?=app_escape($item['bajada'])?></small></td><td data-label="Origen"><?=app_escape(ucfirst($item['origen']))?><?php if($item['archivos']):?><small class="d-block text-secondary"><?=$item['archivos']?> archivo/s</small><?php endif;?></td><td data-label="Sección"><?=app_escape($item['seccion']?:'Sin definir')?></td><td data-label="Publicación"><?=app_escape($item['publicacion_at']?:'Sin programar')?></td><td data-label="Estado"><span class="badge <?=$item['estado']==='activa'?'text-bg-success':($item['estado']==='suspendida'?'text-bg-danger':'text-bg-secondary')?>"><?=app_escape($stateLabels[$item['estado']]??$item['estado'])?></span></td><td data-label="Acciones" class="text-end"><div class="btn-group btn-group-sm"><?php if(!$isDeleted):?><button class="btn btn-outline-primary" title="Editar" onclick="cargar_post('modulos/noticias/php/app_form.php','news-panel',{id:<?=(int)$item['id']?>})"><i class="bi bi-pencil"></i></button><button class="btn btn-outline-secondary" title="Cambiar estado" onclick="newsAction('cycle',<?=(int)$item['id']?>)"><i class="bi bi-arrow-repeat"></i></button><button class="btn btn-outline-danger" title="Eliminar" onclick="newsAction('archive',<?=(int)$item['id']?>)"><i class="bi bi-trash"></i></button><?php else:?><button class="btn btn-outline-success" title="Restaurar" onclick="newsAction('restore',<?=(int)$item['id']?>)"><i class="bi bi-arrow-counterclockwise"></i></button><?php endif;?></div></td></tr><?php endforeach;?>
 </tbody></table></div></div></div></div></section>
-<script>function newsReload(){cargar_post('modulos/noticias/php/app_home.php','content_seccion',$('#news-filter').serialize())}function newsAction(action,id){if(confirm(action==='archive'?'¿Eliminar esta noticia?':'¿Confirmar el cambio?'))appAction('modulos/noticias/php/app_action.php',{action:action,id:id},newsReload)}function newsNeuriaSync(){appAction('modulos/noticias/php/app_neuria_action.php',{action:'sync'},newsReload)}$('#news-filter').on('submit',function(e){e.preventDefault();newsReload()});</script>
+<script>function newsReload(){cargar_post('modulos/noticias/php/app_home.php','content_seccion',$('#news-filter').serialize())}function newsAction(action,id){if(confirm(action==='archive'?'¿Eliminar esta noticia?':'¿Confirmar el cambio?'))appAction('modulos/noticias/php/app_action.php',{action:action,id:id},newsReload)}function newsNeuriaSync(){appAction('modulos/noticias/php/app_neuria_action.php',{action:'sync'},newsReload)}$('#news-filter').on('submit',function(e){e.preventDefault();newsReload()});
+(function () {
+    // Referencia local: una respuesta tardía no modifica una nueva vista cargada por AJAX.
+    var panel = $('#news-neuria-status');
+    var boton = panel.find('[data-neuria-check]');
+    var estados = {
+        conectada: ['success', 'Conectada y activa'],
+        desactivada: ['secondary', 'Desactivada'],
+        sin_configurar: ['warning', 'Sin configurar'],
+        error: ['danger', 'Conexión no verificada']
+    };
+    function mostrar(estado, mensaje) {
+        var estilo = estados[estado] || estados.error;
+        panel.find('[data-neuria-badge]').attr('class', 'badge text-bg-' + estilo[0]).text('NEURIA · ' + estilo[1]);
+        panel.find('[data-neuria-message]').text(mensaje);
+    }
+    function comprobar() {
+        boton.prop('disabled', true);
+        panel.find('[data-neuria-badge]').attr('class', 'badge text-bg-secondary').text('NEURIA · Comprobando…');
+        panel.find('[data-neuria-message]').text('Verificando conexión y credenciales.');
+        panel.find('[data-neuria-time]').text('');
+        $.ajax({
+            url: 'modulos/noticias/php/app_neuria_status.php', method: 'POST', dataType: 'json',
+            timeout: 12000, cache: false,
+            data: {csrf_token: $('meta[name="csrf-token"]').attr('content') || ''}
+        }).done(function (respuesta) {
+            mostrar(respuesta.estado, respuesta.mensaje);
+            var fecha = new Date(respuesta.verificado_at);
+            if (!isNaN(fecha.getTime())) panel.find('[data-neuria-time]').text('Última comprobación: ' + fecha.toLocaleString('es-AR'));
+        }).fail(function (xhr) {
+            mostrar('error', xhr.status === 401 || xhr.status === 403 ? 'Tu sesión no permite verificar la conexión. Volvé a ingresar al panel.' : 'No se pudo completar la comprobación. Volvé a intentar.');
+        }).always(function () { boton.prop('disabled', false); });
+    }
+    boton.on('click', comprobar);
+    comprobar();
+})();
+</script>

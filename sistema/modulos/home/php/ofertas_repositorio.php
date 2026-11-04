@@ -12,11 +12,28 @@ final class OfertasRepositorio
 
     public function __construct(private AppDatabase $db) {}
 
+    /** Una rama desactivada no expone ofertas ni filtros, aunque sus hojas estén activas. */
+    private static function categoriaVisible(string $alias): string
+    {
+        return "$alias.activo=1
+            AND EXISTS (SELECT 1 FROM catalogo_niveles nv WHERE nv.id=$alias.nivel_id AND nv.activo=1)
+            AND NOT EXISTS (SELECT 1 FROM catalogo_categorias anc
+                WHERE $alias.ruta LIKE CONCAT(anc.ruta,'%') AND anc.activo=0)";
+    }
+
+    private static function ofertaVisible(): string
+    {
+        return 'EXISTS (SELECT 1 FROM catalogo_categorias visible WHERE visible.id=v.categoria_id AND '.self::categoriaVisible('visible').')';
+    }
+
     /** Mantiene las claves esperadas por los controles actuales de la portada. */
     public function catalogos(): array
     {
         return [
-            'tipo'=>$this->db->all('SELECT slug codigo,nombre FROM catalogo_categorias WHERE activo=1 AND admite_ofertas=1 ORDER BY orden,nombre'),
+            'tipo'=>$this->db->all('SELECT c.slug codigo,c.nombre FROM catalogo_categorias c
+                WHERE c.admite_ofertas=1 AND '.self::categoriaVisible('c').'
+                AND EXISTS (SELECT 1 FROM v_catalogo_ofertas v WHERE v.categoria_id=c.id)
+                ORDER BY c.orden,c.nombre'),
             'turno'=>$this->db->all('SELECT codigo,nombre FROM turnos WHERE activo=1 ORDER BY orden,nombre'),
             'estado'=>[
                 ['codigo'=>'proximamente','nombre'=>'Próximamente'],
@@ -30,7 +47,7 @@ final class OfertasRepositorio
 
     public function listar(array $filters): array
     {
-        $where=['1=1']; $types=''; $params=[];
+        $where=[self::ofertaVisible()]; $types=''; $params=[];
         $nivel=$this->slug((string)($filters['nivel']??''));
         $categoria=$this->slug((string)($filters['categoria']??''));
         $tipo=$this->slug((string)($filters['tipo']??''));
@@ -78,7 +95,7 @@ final class OfertasRepositorio
 
     public function buscarPorSlug(string $slug): ?array
     {
-        return $this->db->one($this->selectBase().' WHERE v.slug=? LIMIT 1','s',[$slug]);
+        return $this->db->one($this->selectBase().' WHERE v.slug=? AND '.self::ofertaVisible().' LIMIT 1','s',[$slug]);
     }
 
     /** Árbol activo con conteos que incluyen todas las categorías descendientes. */
@@ -86,8 +103,8 @@ final class OfertasRepositorio
     {
         $levels=$this->db->all('SELECT id,codigo,nombre,descripcion,orden FROM catalogo_niveles WHERE activo=1 ORDER BY orden,nombre');
         $categories=$this->db->all("SELECT c.id,c.nivel_id,c.parent_id,c.slug,c.nombre,c.descripcion,c.profundidad,c.ruta,c.admite_ofertas,c.icono,c.imagen_url,c.orden,
-            (SELECT COUNT(*) FROM v_catalogo_ofertas v WHERE v.categoria_ruta LIKE CONCAT(c.ruta,'%')) ofertas_count
-            FROM catalogo_categorias c WHERE c.activo=1 ORDER BY c.nivel_id,c.profundidad,c.orden,c.nombre");
+            (SELECT COUNT(*) FROM v_catalogo_ofertas v WHERE v.categoria_ruta LIKE CONCAT(c.ruta,'%') AND ".self::ofertaVisible().") ofertas_count
+            FROM catalogo_categorias c WHERE ".self::categoriaVisible('c')." ORDER BY c.nivel_id,c.profundidad,c.orden,c.nombre");
         $byParent=[];
         foreach ($categories as $category) {
             $key=$category['parent_id']===null?'root-'.$category['nivel_id']:(string)$category['parent_id'];
