@@ -2,7 +2,7 @@
 declare(strict_types=1);
 require __DIR__.'/../../lib/app.php';
 $context=preg_replace('/[^a-z]/','',(string)($_GET['context']??'contacto'));
-if(!in_array($context,['contacto','oferta'],true))$context='contacto';
+if(!in_array($context,['contacto','oferta','preinscripcion'],true))$context='contacto';
 $alphabet='23456789ABCDEFGHJKLMNPQRSTUVWXYZ';$code='';
 for($i=0;$i<5;$i++)$code.=$alphabet[random_int(0,strlen($alphabet)-1)];
 $_SESSION['portal_captcha_'.$context]=['hash'=>password_hash($code,PASSWORD_DEFAULT),'expires'=>time()+600];

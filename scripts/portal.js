@@ -1,4 +1,10 @@
 (function(){'use strict';
+  document.addEventListener('click', function (event) {
+    var link = event.target.closest('[data-institutional-preinscripcion]');
+    if (!link || event.ctrlKey || event.metaKey || event.shiftKey || event.button !== 0) return;
+    var ventana = window.open(link.href, 'isfdPreinscripcion', 'popup=yes,width=1100,height=850,resizable=yes,scrollbars=yes');
+    if (ventana) { ventana.opener = null; ventana.focus(); event.preventDefault(); }
+  });
   // Reutiliza la ventana del chat; si el navegador bloquea el popup, sigue el enlace normal.
   document.addEventListener('click', function (event) {
     var link = event.target.closest('[data-institutional-chat]');

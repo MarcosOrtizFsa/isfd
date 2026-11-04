@@ -10,9 +10,14 @@ $slug=preg_replace('/[^a-z0-9-]/','',strtolower((string)($_POST['slug']??$_GET['
 $db=app_db();$offer=$slug!==''?(new OfertasRepositorio($db))->buscarPorSlug($slug):null;
 $template=new _template(__DIR__.'/../templates');
 $template->set_file(['page'=>'oferta_leer.html','plan'=>'oferta_plan_item.html']);
-$template->set_var(['PLAN_ESTUDIOS'=>'']);
+$template->set_var(['PLAN_ESTUDIOS'=>'','PREINSCRIPCION_OFERTA'=>'']);
 
 if($offer){
+    if ($offer['estado_oferta']==='inscripcion_abierta') {
+        $destino=$institucion['preinscripcion_url'];
+        if ($destino==='../preinscripcion/') $destino.='?oferta='.(int)$offer['id'];
+        $template->set_var('PREINSCRIPCION_OFERTA','<div class="mt-4 p-4 border rounded-3 bg-white"><strong class="d-block mb-2">¡Inscripción abierta!</strong><p class="mb-3">Iniciá tu preinscripción a esta carrera y da el primer paso.</p><a class="btn btn-info btn-lg w-100" href="'.oferta_publica_escape($destino).'" data-institutional-preinscripcion target="_blank" rel="noopener">Preinscribirme a esta carrera →</a></div>');
+    }
     $plan=$db->all('SELECT id,titulo,contenido FROM oferta_plan_estudios WHERE oferta_id=? ORDER BY orden,id','i',[(int)$offer['id']]);
     foreach($plan as $index=>$section){$template->set_var(['PLAN_ID'=>'plan-'.(int)$offer['id'].'-'.(int)$section['id'],'PLAN_TITULO'=>oferta_publica_escape($section['titulo']),'PLAN_CONTENIDO'=>nl2br(oferta_publica_escape($section['contenido'])),'PLAN_ABIERTO'=>$index===0?'show':'','PLAN_EXPANDIDO'=>$index===0?'true':'false','PLAN_COLAPSADO'=>$index===0?'':'collapsed']);$template->parse('PLAN_ESTUDIOS','plan',true);}
     $facts='';

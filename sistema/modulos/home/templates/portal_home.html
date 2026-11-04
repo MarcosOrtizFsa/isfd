@@ -3,7 +3,7 @@
 
   <div class="isfd-contact-bar"><div class="container d-flex flex-wrap justify-content-between gap-2">
     <div><a href="tel:{TELEFONO}"><i class="bi bi-telephone-fill"></i> {TELEFONO}</a><a href="mailto:{EMAIL}"><i class="bi bi-envelope-fill"></i> {EMAIL}</a></div>
-    <div><a href="{PREINSCRIPCION_URL}" target="_blank" rel="noopener noreferrer">Preinscripción</a><a href="{CAMPUS_URL}" target="_blank" rel="noopener noreferrer">Campus Virtual</a></div>
+    <div><a href="{PREINSCRIPCION_URL}" data-institutional-preinscripcion target="_blank" rel="noopener noreferrer">Preinscripción</a><a href="{CAMPUS_URL}" target="_blank" rel="noopener noreferrer">Campus Virtual</a></div>
   </div></div>
 
   <header class="isfd-header" id="isfd-header"><nav class="navbar navbar-expand-xl navbar-dark"><div class="container">
@@ -21,7 +21,7 @@
     <section class="isfd-hero" style="--hero-image:url('{HERO_IMAGEN}')"><div class="container"><div class="row"><div class="col-lg-8 isfd-reveal">
       <p class="isfd-kicker">{HERO_ETIQUETA}</p><h1>{HERO_TITULO}<br><span>{HERO_NOMBRE}</span></h1>
       <p class="lead">{HERO_DESCRIPCION}</p>
-      <div class="d-flex flex-wrap gap-3"><a class="btn btn-info" href="../#oferta">Ver oferta académica</a><a class="btn btn-outline-light" href="{PREINSCRIPCION_URL}" target="_blank" rel="noopener noreferrer">Preinscribirme</a></div>
+      <div class="d-flex flex-wrap gap-3"><a class="btn btn-info" href="../#oferta">Ver oferta académica</a><a class="btn btn-outline-light" href="{PREINSCRIPCION_URL}" data-institutional-preinscripcion target="_blank" rel="noopener noreferrer">Preinscribirme</a></div>
     </div></div></div></section>
 
     <section class="isfd-highlights" aria-label="Accesos destacados"><div class="container"><div class="row g-0 shadow-lg">
@@ -32,7 +32,7 @@
         <a href="../chat/" data-institutional-chat target="_blank" rel="noopener" aria-label="Ingresar al chat institucional en otra ventana">Ingresar al chat →</a>
       </article>
       <article class="col-md-4 isfd-highlight gold" id="alumnos"><i class="bi bi-laptop"></i><h2>Campus Virtual</h2><p>Aulas, material de cátedra y comunicación con docentes, desde cualquier lugar.</p><a href="{CAMPUS_URL}" target="_blank" rel="noopener noreferrer">Leer más →</a></article>
-      <article class="col-md-4 isfd-highlight burgundy"><i class="bi bi-pencil-square"></i><h2>Preinscripción</h2><p>Iniciá tu trámite en línea y consultá los requisitos para ingresar al instituto.</p><a href="{PREINSCRIPCION_URL}" target="_blank" rel="noopener noreferrer">Leer más →</a></article>
+      <article class="col-md-4 isfd-highlight burgundy"><i class="bi bi-pencil-square"></i><h2>Preinscripción</h2><p>Iniciá tu trámite en línea y consultá los requisitos para ingresar al instituto.</p><a href="{PREINSCRIPCION_URL}" data-institutional-preinscripcion target="_blank" rel="noopener noreferrer">Leer más →</a></article>
     </div></div></section>
 
     <section class="isfd-section" id="instituto"><div class="container"><div class="row g-5 align-items-center">

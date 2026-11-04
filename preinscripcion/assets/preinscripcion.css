@@ -1,0 +1,14 @@
+body { background: #f6f3f1; color: #332e2e; }
+.container { max-width: 1100px; }
+.brand { color: #993333; font-weight: 700; }
+.brand img { object-fit: contain; }
+.brand small { color: #6b6262; font-size: .8rem; font-weight: 400; }
+.intro { background: #702727; color: #fff; border-radius: 1.25rem; }
+.eyebrow { color: #f1d487; text-transform: uppercase; letter-spacing: .08em; font-size: .8rem; }
+.intro h1 { line-height: 1.2; }
+.intro li { padding-left: .3rem; }
+.card { border-radius: 1.25rem; }
+.btn-primary { --bs-btn-bg: #993333; --bs-btn-border-color: #993333; --bs-btn-hover-bg: #702727; --bs-btn-hover-border-color: #702727; --bs-btn-active-bg: #702727; --bs-btn-active-border-color: #702727; --bs-btn-disabled-bg: #993333; }
+.form-control:focus,.form-select:focus { border-color: #993333; box-shadow: 0 0 0 .2rem #99333320; }
+.form-check-input:checked { background-color: #993333; border-color: #993333; }
+.captcha-input { width: 120px; }

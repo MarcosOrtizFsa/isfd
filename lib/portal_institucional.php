@@ -4,6 +4,9 @@ declare(strict_types=1);
 /** Solo datos públicos: excluye correo de alertas y parámetros internos. */
 function portal_institucional_configurar(array $defaults): array
 {
+    if (trim((string)($defaults['preinscripcion_url'] ?? '')) === '') {
+        $defaults['preinscripcion_url'] = '../preinscripcion/';
+    }
     $config = app_db()->one('SELECT * FROM system_08_configuracion ORDER BY id_system_08 LIMIT 1') ?? [];
     // Identidad, contacto, horarios y textos provienen del repositorio versionado.
     foreach (['facebook', 'twitter', 'instagram', 'youtube', 'tiktok'] as $network) {
