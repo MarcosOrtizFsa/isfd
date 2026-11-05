@@ -218,3 +218,7 @@ Ante una falla persistente, informar módulo, acción realizada, fecha/hora y me
 Al iniciar la jornada: revisar consultas y preinscripciones pendientes, solicitudes NEURIA y publicaciones programadas. Antes de publicar: verificar texto, fecha, imagen, archivos, video y presentación pública. Durante actividades del chat: mantener moderación humana. Al finalizar: guardar cambios, cerrar sesión y comunicar incidencias pendientes.
 
 Para instalación, recursos y mantenimiento consultar el [Manual técnico](MANUAL_TECNICO.md). Índice general: [Documentación del proyecto](INDICE.md).
+
+## Registro de acciones — solo Root
+
+En Módulos internos → Registro de acciones podés consultar quién realizó cada operación, su fecha, módulo y detalle. Filtrá por administrador, fechas o A/B/M/E. Se muestran 50 registros por página. El historial es de solo lectura. Ver [Auditoría](AUDITORIA.md).

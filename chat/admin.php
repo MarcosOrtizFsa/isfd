@@ -11,6 +11,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
     app_require_permission('contactos',$permisos[app_post('accion')]);
     try {
         $chat->moderacion($admin['id'],app_int('usuario_id'),app_int('reporte_id'),app_post('accion'),app_post('motivo'));
+        app_log(in_array(app_post('accion'),['advertir','descartar'],true)?'M:CHAT':(app_post('accion')==='ocultar'?'B:CHAT':'E:CHAT'),'Participante #'.app_int('usuario_id').'; reporte #'.app_int('reporte_id').'; acción '.app_post('accion'));
         (new ChatRealtime(app_db()))->notificar();
         app_json(['ok'=>true,'message'=>'Decisión guardada en el historial.']);
     } catch (ChatError $e) { app_json(['ok'=>false,'message'=>$e->getMessage()],$e->status); }

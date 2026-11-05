@@ -24,7 +24,7 @@ try {
             $db->execute('UPDATE noticias SET actualizado_por=? WHERE id=?','ii',[(int)$usuario['id'],$id]);
         });
     }
-    app_log('NOTICIA_ADJUNTOS','Noticia '.$id.' · '.$accion);
+    app_log(in_array($accion,['file_remove','video_remove'],true)?'B:ADJUNTO':($accion==='upload'?'A:ADJUNTO':'M:VIDEO'),'Noticia '.$id.'; acción '.$accion.'; archivo #'.app_int('archivo_id'));
     app_json(['ok'=>true,'message'=>'Adjuntos actualizados.']);
 } catch (DomainException $error) {
     app_json(['ok'=>false,'message'=>$error->getMessage()],422);

@@ -169,6 +169,16 @@ function app_log(string $action, string $details = '', string $message = 'OK', i
     if ($user === null) {
         return;
     }
+    // Resuelve el módulo desde la ruta del servidor, nunca desde datos del formulario.
+    if ($moduleId === 0) {
+        $path = str_replace('\\', '/', (string)($_SERVER['SCRIPT_FILENAME'] ?? ''));
+        $module = preg_match('~/modulos/([a-z]+)/php/~', $path, $match) ? $match[1] : '';
+        if (str_ends_with($path, '/chat/admin.php')) $module = 'contactos';
+        if ($module !== '') {
+            $row = app_db()->one('SELECT id_system_01 FROM system_01_modulos WHERE system_01_path_home=? ORDER BY id_system_01 LIMIT 1', 's', [$module]);
+            $moduleId = (int)($row['id_system_01'] ?? 0);
+        }
+    }
     app_db()->insert(
         'INSERT INTO system_05_logistica (rela_system_03, rela_system_07, rela_system_06, rela_system_01, system_05_fecha, system_05_hora, system_05_accion, system_05_detalles, system_05_mensaje) VALUES (?, ?, ?, ?, CURDATE(), CURTIME(), ?, ?, ?)',
         'iiiisss',

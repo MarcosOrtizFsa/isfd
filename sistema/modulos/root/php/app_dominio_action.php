@@ -43,6 +43,7 @@ foreach (dominio_campos() as $fields) {
 $values[] = (int) $record['id_system_08'];
 try {
     $db->execute('UPDATE system_08_configuracion SET ' . implode(',', $assignments) . ' WHERE id_system_08=?', $types . 'i', $values);
+    app_log('M:DOMINIO','Configuración #'.(int)$record['id_system_08'].'; datos institucionales actualizados','OK',1);
     app_json(['ok' => true, 'message' => 'Configuración de dominio guardada.']);
 } catch (Throwable $error) {
     error_log('Error al guardar configuración de dominio: ' . $error->getMessage());

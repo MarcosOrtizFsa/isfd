@@ -8,7 +8,8 @@ $actual=app_db()->one('SELECT estado FROM portal_preinscripciones WHERE id=?','i
 app_guard_state('contactos','estado',$actual['estado']??'');
 try {
     (new Preinscripciones(app_db()))->gestionar(app_int('id'),app_post('estado'),app_post('nota'),(int)$usuario['id'],app_post('estado_anterior'));
-    app_log('PREINSCRIPCION_GESTION','Solicitud '.app_int('id').' '.app_post('estado'));
+    app_log('M:PREINSCRIPCION','Solicitud '.app_int('id').'; seguimiento guardado; estado '.app_post('estado'));
+    if (($actual['estado']??'')!==app_post('estado')) app_log('E:PREINSCRIPCION','Solicitud '.app_int('id').'; estado '.($actual['estado']??'').' → '.app_post('estado'));
     app_json(['ok'=>true,'message'=>'Seguimiento guardado.']);
 } catch (DomainException $error) {
     app_json(['ok'=>false,'message'=>$error->getMessage()]);

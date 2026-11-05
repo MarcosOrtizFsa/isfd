@@ -22,7 +22,7 @@ if(in_array($action,['publication','archive','restore'],true)){
     }else{
         $db->execute("UPDATE ofertas SET deleted_at=NULL,estado_publicacion='borrador' WHERE id=?",'i',[$id]);$message='Oferta restaurada como borrador.';
     }
-    app_log('OFERTA_ESTADO','Oferta '.$id,'OK',$moduleId);app_json(['ok'=>true,'message'=>$message]);
+    app_log($action==='archive'?'B:OFERTA':'E:OFERTA','Oferta '.$id.'; acción '.$action.'; publicación anterior '.$offer['estado_publicacion'],'OK',$moduleId);app_json(['ok'=>true,'message'=>$message]);
 }
 if($action!=='save')app_json(['ok'=>false,'message'=>'Acción inválida.'],400);
 
@@ -122,5 +122,11 @@ try{
         return $id;
     });
 }catch(mysqli_sql_exception $error){if($newImagePath&&is_file($newImagePath))@unlink($newImagePath);app_json(['ok'=>false,'message'=>'No se pudo guardar. Revisá que el título y la edición de la convocatoria no estén repetidos.'],409);}
+if ($actual && ($actual['estado_oferta']!==$offerState || $actual['estado_publicacion']!==$publication)) {
+    app_log('E:OFERTA','Oferta '.$id.'; estado '.$actual['estado_oferta'].' → '.$offerState.'; publicación '.$actual['estado_publicacion'].' → '.$publication,'OK',$moduleId);
+}
+if ($callYear>0 && ($convocatoria['estado']??'programada')!==$callState) {
+    app_log('E:CONVOCATORIA','Oferta '.$id.'; año '.$callYear.'; estado '.($convocatoria['estado']??'programada').' → '.$callState,'OK',$moduleId);
+}
 if($oldImage!==''&&$oldImage!==$imageUrl)oferta_eliminar_imagen_local($oldImage);
-app_log('OFERTA_GUARDAR','Oferta '.$id,'OK',$moduleId);app_json(['ok'=>true,'id'=>$id,'message'=>'Oferta guardada correctamente.']);
+app_log(app_int('id')?'M:OFERTA':'A:OFERTA','Oferta '.$id.'; publicación '.$publication.'; estado '.$offerState.'; convocatoria '.$callState,'OK',$moduleId);app_json(['ok'=>true,'id'=>$id,'message'=>'Oferta guardada correctamente.']);

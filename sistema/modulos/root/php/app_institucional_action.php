@@ -6,7 +6,8 @@ app_verify_csrf();
 require_once __DIR__.'/../../../../lib/institucional_repositorio.php';
 try {
     if (app_post('seccion') === 'autoridades') throw new InvalidArgumentException('Usá el administrador de Autoridades al final de Configuración de dominio.');
-    (new InstitucionalRepositorio(app_db()))->guardar(app_post('seccion'), app_int('anio'), app_post('motivo'), is_array($_POST['valores'] ?? null) ? $_POST['valores'] : [], app_int('version'), $user['id']);
+    $version=(new InstitucionalRepositorio(app_db()))->guardar(app_post('seccion'), app_int('anio'), app_post('motivo'), is_array($_POST['valores'] ?? null) ? $_POST['valores'] : [], app_int('version'), $user['id']);
+    app_log('M:INSTITUCIONAL','Sección '.app_post('seccion').'; año '.app_int('anio').'; versión '.$version,'OK',1);
     app_json(['ok'=>true,'message'=>'Contenido publicado. La versión anterior queda en el historial.']);
 } catch (InvalidArgumentException $error) {
     app_json(['ok'=>false,'message'=>$error->getMessage()],422);

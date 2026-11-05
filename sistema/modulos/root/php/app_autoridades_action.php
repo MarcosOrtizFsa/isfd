@@ -6,6 +6,7 @@ app_verify_csrf();
 require_once __DIR__.'/../../../../lib/autoridades.php';
 $stored=null;
 try {
+    $anterior=app_int('id')?app_db()->one('SELECT visible FROM institucional_autoridades WHERE id=?','i',[app_int('id')]):null;
     $data=autoridad_validar($_POST);
     $imageUrl=null;
     $file=$_FILES['imagen']??null;
@@ -31,6 +32,10 @@ try {
         $imageUrl='../uploads/autoridades/'.$filename;
     }
     $id=autoridad_guardar(app_db(),app_int('id'),app_int('revision'),$data,$imageUrl,isset($_POST['quitar_imagen']),$user['id'],app_post('motivo'));
+    // El archivo ya pertenece a una versión persistida; no retirarlo si falla el registro posterior.
+    $stored=null;
+    app_log(app_int('id')?'M:AUTORIDAD':'A:AUTORIDAD','Autoridad '.$id.'; año '.$data['anio'].'; visible '.$data['visible'],'OK',1);
+    if ($anterior && (int)$anterior['visible']!==$data['visible']) app_log('E:AUTORIDAD','Autoridad '.$id.'; visible '.$anterior['visible'].' → '.$data['visible'],'OK',1);
     app_json(['ok'=>true,'id'=>$id,'message'=>'Autoridad guardada. La edición quedó registrada en el historial.']);
 } catch (Throwable $error) {
     // Solo se retira el archivo nuevo si el guardado falló; las fotos históricas permanecen.

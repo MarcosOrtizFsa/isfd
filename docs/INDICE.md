@@ -31,3 +31,5 @@ Los documentos de referencia aportados por el responsable y las notas locales no
 Cada cambio funcional debe actualizar la guía de su dominio; si cambia un flujo administrativo, actualizar además el manual de usuario. Cambios en tablas, dependencias, configuración o rutas deben reflejarse en el manual técnico y la guía de despliegue. Registrar qué migraciones se ejecutaron realmente en cada entorno. La existencia de código o SQL en Git no prueba su instalación en producción.
 
 - [Permisos por usuario y módulo](PERMISOS.md): acceso, ABME, jerarquía, migración 021 y pruebas.
+
+- [Registro de acciones administrativas](AUDITORIA.md): historial exclusivo de Root, filtros y cobertura ABME.

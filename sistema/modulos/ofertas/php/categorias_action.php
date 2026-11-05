@@ -13,7 +13,10 @@ try {
         app_guard_state('ofertas','activo',$actual['activo']??1);
     }
     $id = (new CategoriasServicio(app_db()))->ejecutar($accion, $_POST);
-    app_log('CATEGORIA_OFERTA', 'Acción '.$accion.'; categoría '.$id);
+    app_log($accion==='save'?(app_int('id')?'M:CATEGORIA':'A:CATEGORIA'):($accion==='delete'?'B:CATEGORIA':'E:CATEGORIA'), 'Acción '.$accion.'; categoría '.$id);
+    if ($accion==='save' && app_int('id') && (string)$actual['activo']!==(string)($_POST['activo']??'0')) {
+        app_log('E:CATEGORIA','Categoría '.$id.'; activa '.$actual['activo'].' → '.($_POST['activo']??'0'));
+    }
     app_json(['ok'=>true, 'message'=>'Categoría actualizada.']);
 } catch (DomainException $error) {
     app_json(['ok'=>false, 'message'=>$error->getMessage()]);

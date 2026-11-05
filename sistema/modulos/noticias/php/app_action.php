@@ -14,7 +14,7 @@ if(in_array($action,['cycle','archive','restore'],true)){
     if($action==='cycle'){$states=['pendiente'=>'activa','activa'=>'suspendida','suspendida'=>'pendiente'];$next=$states[$row['estado']]??'pendiente';$db->execute("UPDATE noticias SET estado=?,estado_revision=IF(origen='neuria' AND ?='activa','revisada',estado_revision),publicacion_at=CASE WHEN ?='activa' THEN COALESCE(publicacion_at,NOW()) ELSE publicacion_at END,actualizado_por=? WHERE id=?",'sssii',[$next,$next,$next,$user['id'],$id]);$message='Estado actualizado a '.$next.'.';}
     elseif($action==='archive'){$db->execute("UPDATE noticias SET deleted_at=NOW(),estado_revision=IF(origen='neuria','rechazada',estado_revision),actualizado_por=? WHERE id=?",'ii',[$user['id'],$id]);$message='Noticia eliminada. Podés restaurarla desde el filtro de eliminados.';}
     else{$db->execute("UPDATE noticias SET deleted_at=NULL,estado='pendiente',actualizado_por=? WHERE id=?",'ii',[$user['id'],$id]);$message='Noticia restaurada como pendiente.';}
-    app_log('NOTICIA_ESTADO','Noticia '.$id,'OK',$moduleId);app_json(['ok'=>true,'message'=>$message]);
+    app_log($action==='archive'?'B:NOTICIA':'E:NOTICIA','Noticia '.$id.'; acción '.$action.'; estado anterior '.$row['estado'].($action==='cycle'?'; nuevo '.$next:''),'OK',$moduleId);app_json(['ok'=>true,'message'=>$message]);
 }
 if($action!=='save')app_json(['ok'=>false,'message'=>'Acción inválida.'],400);
 
@@ -44,4 +44,5 @@ try{
     });
 }catch(Throwable $error){app_json(['ok'=>false,'message'=>$error instanceof mysqli_sql_exception?'No se pudo guardar porque la noticia ya existe.':$error->getMessage()],409);}
 if($state==='activa')$db->execute("UPDATE noticias SET estado_revision=IF(origen='neuria','revisada',estado_revision) WHERE id=?",'i',[$id]);
-app_log('NOTICIA_GUARDAR','Noticia '.$id,'OK',$moduleId);app_json(['ok'=>true,'id'=>$id,'message'=>$neuriaId>0?'Oferta incorporada como noticia pendiente.':'Noticia guardada correctamente.']);
+if ($actual && $actual['estado']!==$state) app_log('E:NOTICIA','Noticia '.$id.'; estado '.$actual['estado'].' → '.$state,'OK',$moduleId);
+app_log(app_int('id')?'M:NOTICIA':'A:NOTICIA','Noticia '.$id.'; estado '.$state,'OK',$moduleId);app_json(['ok'=>true,'id'=>$id,'message'=>$neuriaId>0?'Oferta incorporada como noticia pendiente.':'Noticia guardada correctamente.']);

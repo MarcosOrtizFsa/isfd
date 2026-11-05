@@ -4,6 +4,7 @@ declare(strict_types=1);
 if (PHP_SAPI!=='cli') exit;
 ob_start();
 require __DIR__.'/../lib/app.php';
+require __DIR__.'/../lib/auditoria.php';
 function permiso_check(bool $ok,string $mensaje): void {
     if (!$ok) throw new RuntimeException($mensaje);
     echo 'OK: '.$mensaje.PHP_EOL;
@@ -37,6 +38,8 @@ try {
     permiso_check($servicio->permite(['id'=>$root['id_system_03'],'mode'=>0],'root','E'),'Root conserva acceso completo');
     foreach (['control','ofertas','noticias','contactos','root'] as $mod) permiso_check($peticion($ruta($mod),[],$sesion)['status']===403,'Acceso directo bloqueado a '.$mod);
     permiso_check($peticion('chat/admin.php',[],$sesion,false)['status']===403,'Chat requiere acceso a Contactos');
+    permiso_check($peticion($ruta('root','app_auditoria.php'),[],$sesion)['status']===403,'Auditoría exclusiva de Root');
+    permiso_check($peticion($ruta('root','app_auditoria.php'),[],$sesionRoot)['status']===200,'Root puede consultar el registro de acciones');
     permiso_check($peticion($ruta('control','permisos_action.php'),['id'=>$usuarioId,'permisos'=>[]],$sesion)['status']===403,'Director no puede otorgarse permisos');
     permiso_check($peticion($ruta('control','_interfaz.php'),[],$sesion)['status']===410,'Controlador antiguo retirado');
     $asignacion=[];
@@ -70,6 +73,7 @@ try {
     permiso_check($noticiaId>0,'A permite crear noticia pendiente');
     $r=$peticion($ruta('noticias','app_action.php'),array_replace($texto,['id'=>$noticiaId,'estado'=>'activa']),$sesion);
     permiso_check($r['status']===403 && $db->one('SELECT estado FROM noticias WHERE id=?','i',[$noticiaId])['estado']==='pendiente','M no permite publicar mediante save');
+    permiso_check((int)$db->one('SELECT COUNT(*) n FROM system_05_logistica WHERE rela_system_03=?','i',[$usuarioId])['n']===1,'Acción rechazada no registra un cambio exitoso');
     $r=$peticion($ruta('noticias','app_action.php'),array_replace($texto,['id'=>$noticiaId,'contenido'=>'Edición permitida.']),$sesion);
     permiso_check(!empty($r['json']['ok']),'M permite editar texto conservando estado');
     permiso_check($peticion($ruta('ofertas','app_action.php'),['action'=>'save','estado_publicacion'=>'publicada'],$sesion)['status']===403,'A no publica ofertas sin E');
@@ -80,6 +84,26 @@ try {
     $servicio->guardar($usuarioId,$asignacion);
     // Suspender una nota temporal no la publica en el portal.
     permiso_check(!empty($peticion($ruta('noticias','app_action.php'),array_replace($texto,['id'=>$noticiaId,'estado'=>'suspendida']),$sesion)['json']['ok']),'E permite cambiar estado');
+    $asignacion[$modulos['noticias']]['B']=1;
+    $servicio->guardar($usuarioId,$asignacion);
+    permiso_check(!empty($peticion($ruta('noticias','app_action.php'),['action'=>'archive','id'=>$noticiaId],$sesion)['json']['ok']),'B archiva noticia temporal');
+    $auditoria=new Auditoria($db);
+    foreach (['A','B','M','E'] as $tipo) {
+        $consulta=$auditoria->consultar(['usuario'=>$usuarioId,'modulo'=>$modulos['noticias'],'tipo'=>$tipo]);
+        permiso_check($consulta['total']>0 && str_starts_with($consulta['filas'][0]['system_05_accion'],$tipo.':'),'Auditoría registra y filtra '.$tipo.' por administrador y módulo');
+    }
+    permiso_check($auditoria->consultar(['usuario'=>$usuarioId,'q'=>"' OR 1=1 --"])['total']===0,'Búsqueda de auditoría usa parámetros');
+    permiso_check($peticion($ruta('root','app_auditoria.php'),['desde'=>'2026-02-30'],$sesionRoot)['status']===422,'Auditoría valida fechas');
+    $marca='auditoria-test-'.$usuarioId.' <script>alert(1)</script>';
+    for ($i=0;$i<51;$i++) {
+        $db->insert("INSERT INTO system_05_logistica (rela_system_03,rela_system_07,rela_system_06,rela_system_01,system_05_fecha,system_05_hora,system_05_accion,system_05_detalles,system_05_mensaje) VALUES (?,2,1,?,CURDATE(),CURTIME(),'M:PRUEBA',?,'OK')",'iis',[$usuarioId,$modulos['noticias'],$marca]);
+    }
+    $filtro=['usuario'=>$usuarioId,'q'=>'auditoria-test-'.$usuarioId];
+    $primera=$auditoria->consultar($filtro);
+    $segunda=$auditoria->consultar($filtro+['pagina'=>2]);
+    permiso_check($primera['total']===51 && count($primera['filas'])===50 && count($segunda['filas'])===1,'Historial paginado de 50 registros');
+    $html=$peticion($ruta('root','app_auditoria.php'),$filtro,$sesionRoot)['body'];
+    permiso_check(str_contains($html,'&lt;script&gt;') && !str_contains($html,'<script>alert(1)</script>'),'Detalle histórico escapado contra HTML ejecutable');
     $servicio->guardar($usuarioId,[]);
     permiso_check($peticion($ruta('noticias'),[],$sesion)['status']===403,'Revocar acceso afecta sesión abierta');
     $db->execute('UPDATE system_03_usuarios SET system_03_estado=2 WHERE id_system_03=?','i',[$usuarioId]);

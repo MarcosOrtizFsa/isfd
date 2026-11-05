@@ -7,7 +7,7 @@ try {
     $permisos=$_POST['permisos']??[];
     if (!is_array($permisos)) throw new DomainException('Los permisos no tienen un formato válido.');
     (new PermisosModulos(app_db()))->guardar(app_int('id'),$permisos);
-    app_log('USUARIO_PERMISOS','Permisos del usuario '.app_int('id'),'OK',2);
+    app_log('M:PERMISOS','Permisos del usuario '.app_int('id').'; asignaciones: '.json_encode($permisos,JSON_UNESCAPED_UNICODE),'OK',2);
     app_json(['ok'=>true,'message'=>'Permisos actualizados.']);
 } catch (DomainException $error) {
     app_json(['ok'=>false,'message'=>$error->getMessage()],422);

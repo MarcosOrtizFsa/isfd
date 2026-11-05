@@ -292,3 +292,7 @@ Diagnóstico: revisar error HTTP y respuesta AJAX, registro PHP/Apache, `system_
 ## 16. Documentación relacionada
 
 [Índice](INDICE.md) · [Manual del administrador](MANUAL_ADMINISTRADOR.md) · [Noticias](NOTICIAS.md) · [NEURIA v1](NEURIA_V1.md) · [Catálogo](CATALOGO.md) · [Contenido institucional](CONTENIDO_INSTITUCIONAL.md) · [Preinscripciones](PREINSCRIPCIONES.md) · [Chat](CHAT_INSTITUCIONAL.md).
+
+## Auditoría administrativa
+
+La bitácora utiliza system_05_logistica y app_log(). La consulta paginada está en lib/auditoria.php y el panel exclusivo de Root en sistema/modulos/root/php/app_auditoria.php. Conserva eventos anteriores y agrega clasificación ABME. Cobertura, límites, pruebas y despliegue: [AUDITORIA.md](AUDITORIA.md). No requiere migración nueva.
