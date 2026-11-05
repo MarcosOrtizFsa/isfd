@@ -2,7 +2,7 @@
 declare(strict_types=1);
 require __DIR__.'/../../../../lib/app.php';
 require_once __DIR__.'/neuria_v1_cliente.php';
-app_require_mode([0,1,2]);
+app_require_permission('noticias');
 app_verify_csrf();
 header('Cache-Control: no-store');
 

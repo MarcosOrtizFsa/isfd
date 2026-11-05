@@ -2,7 +2,7 @@
 
 Actualización multiplataforma: ejecutar también `database/migrations/016_autoridades_video_url_up.sql` en producción. El campo «Enlace del video de saludo» admite YouTube, Vimeo y `https://app.heygen.com/embeds/ID`. Conserva los códigos anteriores de YouTube. Las URLs se normalizan y se validan por proveedor, tanto al guardar como al generar el reproductor; no se acepta HTML arbitrario. El historial incluye la URL del video.
 
-Instalación: ejecutar `php database/migrar_autoridades.php` desde la raíz, antes de desplegar las vistas. Requiere la migración institucional 014. La migración 015 crea fichas e historial y copia el listado anterior sin borrarlo; se puede repetir sin duplicar personas.
+Instalación: ejecutar `php database/migrar_autoridades.php` desde la raíz, antes de desplegar las vistas. Requiere la migración institucional 014. La migración 015 crea fichas e historial; el migrador carga el listado anterior sin borrarlo y evita duplicar personas. Revisar también el paso 016 para los enlaces multiplataforma.
 
 Administración: Módulos internos → Configuración de dominio → Autoridades. Acceso exclusivo de root. Se pueden agregar personas y editar nombre, apellido, cargo, profesión, presentación, año, orden, foto, video y visibilidad. Para un reemplazo se oculta la ficha saliente y se crea otra; el año no programa automáticamente su visibilidad.
 
@@ -12,6 +12,6 @@ La portada muestra exclusivamente fichas visibles, ordenadas por orden e ID. Usa
 
 Fotos: JPG, PNG o WebP, hasta 5 MB y 12 megapíxeles. El servidor verifica el contenido y recodifica a JPEG, con ancho máximo de 1000 px. Requiere GD y escritura en `uploads/autoridades/`.
 
-Se migraron las tres autoridades existentes. Revisar nombres y apellidos separados automáticamente, completar fotos y saludos y agregar las dos personas restantes. No se inventaron identidades ni videos.
+El primer migrador tomó las autoridades existentes en aquel momento; ese número histórico no describe la nómina vigente. La nómina debe mantenerse desde el administrador con los datos validados por la institución. Revisar nombres y apellidos importados, completar fotos y saludos y ocultar las fichas que dejen de corresponder; no inventar identidades ni videos para completar tarjetas.
 
 Pruebas: `php tests/autoridades_test.php`. Las pruebas de escritura usan tablas temporales de la conexión, sin modificar las fichas reales.

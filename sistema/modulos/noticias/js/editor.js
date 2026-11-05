@@ -15,12 +15,17 @@
                 // La nota recién guardada habilita adjuntos sin cerrar el editor ni recargar la lista.
                 if (esNueva) {
                     $('#news-editor-title').text('Editar noticia');
-                    formulario.find('select[name="estado"]').prop('disabled', false).val(formulario.find('input[name="estado"]').val() || formulario.find('select[name="estado"]').val());
+                    var estado = formulario.find('select[name="estado"]');
+                    estado.prop('disabled', estado.attr('data-can-state') !== '1').val(formulario.find('input[name="estado"]').val() || estado.val());
                     formulario.find('input[name="estado"]').remove();
                     cargar_post('modulos/noticias/php/app_adjuntos.php', 'news-attachments-panel', {noticia_id: respuesta.id});
                 }
             }).fail(function (xhr) {
                 resultado.attr('class', 'alert alert-danger').text((xhr.responseJSON || {}).message || 'No se pudo guardar el texto.');
-            }).always(function () { boton.prop('disabled', false); });
+            }).always(function () {
+                var soloAlta = Number(formulario.find('[name="id"]').val()) > 0 && formulario.attr('data-can-edit') !== '1';
+                formulario.find('fieldset').prop('disabled', soloAlta);
+                boton.prop('disabled', soloAlta);
+            });
     });
 })(jQuery);

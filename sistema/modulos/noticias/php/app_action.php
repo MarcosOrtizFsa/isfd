@@ -2,8 +2,10 @@
 declare(strict_types=1);
 require __DIR__ . '/../../../../lib/app.php';
 require_once __DIR__ . '/../../home/php/neuria_sanitizador.php';
-app_require_mode([0,1,2]);app_verify_csrf();
-$db=app_db();$action=app_post('action');$id=app_int('id');$user=app_user();
+app_require_permission('noticias');app_verify_csrf();
+$db=app_db();$action=app_post('action');$id=app_int('id');
+app_require_permission('noticias', $action === 'save' ? ($id ? 'M' : 'A') : ($action === 'archive' ? 'B' : 'E'));
+$user=app_user();
 $moduleId=(int)($db->one("SELECT id_system_01 FROM system_01_modulos WHERE system_01_path_home='noticias' LIMIT 1")['id_system_01']??0);
 
 if(in_array($action,['cycle','archive','restore'],true)){
@@ -16,6 +18,8 @@ if(in_array($action,['cycle','archive','restore'],true)){
 }
 if($action!=='save')app_json(['ok'=>false,'message'=>'Acción inválida.'],400);
 
+$actual=$id?$db->one('SELECT estado FROM noticias WHERE id=?','i',[$id]):null;
+app_guard_state('noticias','estado',$actual['estado']??'pendiente');
 $neuriaId=app_int('neuria_id');$title=app_post('titulo');$summary=app_post('bajada');$content=trim((string)($_POST['contenido']??''));$strapline=app_post('volanta');$section=app_post('seccion');$state=app_post('estado')?:'pendiente';$date=app_post('fecha_publicacion');$time=app_post('hora_publicacion');
 $existingRecord=$id?$db->one('SELECT id,origen,neuria_bloqueada FROM noticias WHERE id=?','i',[$id]):null;
 if($id&&!$existingRecord)app_json(['ok'=>false,'message'=>'Noticia inexistente.'],404);

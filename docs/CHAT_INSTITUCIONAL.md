@@ -7,9 +7,9 @@ Aplicación en `/chat/`, integrada al proyecto PHP/MySQL. No utiliza la API de N
 1. Respaldar la base de producción.
 2. Importar `database/migrations/018_chat_institucional_up.sql` y luego `019_chat_websocket_up.sql` en **isfdcom_data_base**. Son repetibles, conservan registros y no necesitan procedimientos ni DEFINER. Crean tablas, cinco salas, 512 avatares y credenciales temporales para WebSocket.
 3. Subir la carpeta `chat/` completa, incluyendo `chat/lib/.htaccess`.
-4. Actualizar `lib/portal_institucional.php`, `scripts/portal.js`, `css/portal.css` y `sistema/modulos/root/php/app_home.php`.
+4. Actualizar `lib/portal_institucional.php`, `scripts/portal.js`, `css/portal.css` y `sistema/modulos/contactos/php/app_home.php`.
 5. Conservar los archivos privados y la conexión de producción. AJAX no requiere procesos adicionales. Para activar WebSocket, seguir `CHAT_WEBSOCKET.md`; mientras no se configure la URL WSS de producción, se usará AJAX.
-6. Abrir `/chat/`, registrar dos cuentas, elegir avatares, entrar a la misma sala y probar mensajes, respuestas y menciones. Revisar desde root **Modulos internos → Administrar chat institucional**.
+6. Abrir `/chat/`, registrar dos cuentas, elegir avatares, entrar a la misma sala y probar mensajes, respuestas y menciones. Revisar desde root **Contactos → Administrar chat institucional**.
 
 En local: `C:\xampp\php\php.exe database/migrar_chat.php`. Acceso: `http://localhost/isfd.com.ar/chat/`. PHP 8.1+, mysqli/mysqlnd, mbstring, sesiones y MySQL/MariaDB con InnoDB; mismas dependencias del proyecto. jQuery y el Bootstrap del panel administrativo se cargan desde los CDN usados por el sitio.
 
@@ -32,7 +32,7 @@ WebSocket autenticado como transporte principal cuando está configurado y dispo
 
 ## Moderación y seguridad
 
-Los textos se muestran como texto, nunca HTML. Cada escritura exige CSRF y cuenta habilitada. La sesión se regenera al autenticar. Las claves del panel y del chat están separadas; cerrar el chat no cierra mipanel. El administrador del chat debe estar autenticado como root.
+Los textos se muestran como texto, nunca HTML. Cada escritura exige CSRF y cuenta habilitada. La sesión se regenera al autenticar. Las claves del panel y del chat están separadas; cerrar el chat no cierra mipanel. El administrador del chat debe tener Acceso a Contactos; Root tiene acceso implícito. La moderación se limita por M/B/E según [PERMISOS.md](PERMISOS.md).
 
 Controles locales conservadores para amenazas directas y agresiones explícitas dirigidas mediante @usuario; expresiones educativas/citadas quedan fuera de estas reglas. **No es un clasificador de IA ni garantiza reconocer contexto, discriminación o acoso**: las evasiones y los falsos positivos requieren reportes y revisión humana. No se mandan conversaciones a proveedores externos.
 
@@ -41,7 +41,7 @@ Controles locales conservadores para amenazas directas y agresiones explícitas 
 - Spam: intervalo mínimo de 2 segundos y bloqueo de mensajes idénticos durante 60 segundos; máximo 30 intentos de envío por minuto.
 - Reportes: hasta 10 cada 10 minutos; un reporte por mensaje/denunciante.
 - Autenticación: 8 intentos por nombre de cuenta cada 15 minutos y 300 por IP, para admitir Wi-Fi compartido. Registro: 120 por IP/hora. Los contadores son atómicos y persisten en BD. Ajustar esos límites al contexto de la exposición.
-- Root puede advertir, retirar mensajes, pausar 24 horas, expulsar, rehabilitar o descartar reportes. Toda decisión guarda administrador, motivo y fecha en `chat_auditoria`. Las advertencias se muestran en el perfil del participante. La expulsión permanente nunca es automática.
+- Root o el operador autorizado por los permisos de Contactos puede advertir, retirar mensajes, pausar 24 horas, expulsar, rehabilitar o descartar reportes. Toda decisión guarda administrador, motivo y fecha en `chat_auditoria`. Las advertencias se muestran en el perfil del participante. La expulsión permanente nunca es automática.
 
 La moderación oculta mensajes conservándolos para auditoría. Las vistas abiertas reciben los IDs retirados en la siguiente consulta. Los reportes incluyen contexto previo para revisión. No se publica el correo ni las credenciales de los participantes.
 

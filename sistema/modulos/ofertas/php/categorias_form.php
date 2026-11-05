@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 require __DIR__.'/../../../../lib/app.php';
-app_require_mode([0,1,2]);
+app_require_permission('ofertas',app_int('id')?'M':'A');
 $db = app_db();
 $id = app_int('id');
 $categoria = $id ? $db->one('SELECT * FROM catalogo_categorias WHERE id=?', 'i', [$id]) : null;
@@ -23,7 +23,7 @@ $padres = $db->all('SELECT id,nivel_id,nombre FROM catalogo_categorias WHERE adm
                 <div class="col-12"><p class="text-secondary small mb-0">La ubicación jerárquica y el identificador del enlace se conservan para mantener las relaciones existentes.</p></div>
             <?php endif; ?>
             <div class="col-12"><label for="category-description" class="form-label">Descripción</label><textarea id="category-description" class="form-control" name="descripcion" rows="3"><?=app_escape($categoria['descripcion'] ?? '')?></textarea></div>
-            <div class="col-md-6"><div class="form-check"><input id="category-active" class="form-check-input" type="checkbox" name="activo" value="1" <?=($categoria['activo'] ?? 1) ? 'checked' : ''?>><label for="category-active" class="form-check-label">Activa</label></div></div>
+            <div class="col-md-6"><div class="form-check"><input id="category-active" class="form-check-input" type="checkbox" name="activo" <?=app_permission_attrs('ofertas','E')?> value="1" <?=($categoria['activo'] ?? 1) ? 'checked' : ''?>><label for="category-active" class="form-check-label">Activa</label></div></div>
             <div class="col-md-6"><div class="form-check"><input id="category-offers" class="form-check-input" type="checkbox" name="admite_ofertas" value="1" <?=($categoria['admite_ofertas'] ?? 1) ? 'checked' : ''?>><label for="category-offers" class="form-check-label">Admite ofertas directamente</label></div><small class="text-secondary">Desmarcar para agrupar subcategorías. No puede tener ambos usos.</small></div>
             <div class="col-12 text-end"><button type="submit" class="btn btn-primary">Guardar categoría</button></div>
         </div>

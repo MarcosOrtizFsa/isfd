@@ -405,61 +405,12 @@ function guardar_logistica($rela_system_03,$rela_system_07,$rela_system_06,$rela
 
 function optener_permisos($acceso,$rela_system_01,$sesion_system_03,$mysqli)
 {
-	$retorno ='';
-	$system_03_modo='';
-	$dat = $mysqli -> consulta_SQL("Select * from system_03_usuarios where id_system_03='$sesion_system_03' ");
-	if ($dat == true)
-	{
-		$system_03_modo = $dat[0]['system_03_modo'];
-	}
-	
-	
-	$row = $mysqli -> consulta_SQL("Select * from system_02_permisos where rela_system_01='$rela_system_01' AND rela_system_03 = '$sesion_system_03' ");
-	if ($row == true)
-	{
-		switch (strtoupper($acceso))
-		{
-			case "A": // AGREGAR
-			$retorno = $row[0]['system_02_A'];
-			break;
-			case "B": // BORRA
-			$retorno = $row[0]['system_02_B'];
-			break;
-			case "M": // MODIFICA
-			$retorno = $row[0]['system_02_M'];
-			break;
-			case "E": // ESTADO
-			$retorno = $row[0]['system_02_E'];
-			break;
-			case "V": // VERIFICA
-			$retorno = $row[0]['system_02_V'];
-			break;
-			case "S": // SUBE
-			$retorno = $row[0]['system_02_S'];
-			break;
-			case "D": // DESCARGA
-			$retorno = $row[0]['system_02_D'];
-			break;
-			case "I": // IMPRIME
-			$retorno = $row[0]['system_02_I'];
-			break;
-			case "C": // CHAT
-			$retorno = $row[0]['system_02_C'];
-			break;						
-			default:// NO TIENE PERMISOS
-			$retorno = '0';
-			break;		
-		}
-	}
-	
-	
-	
-	if ($system_03_modo == '0' or $system_03_modo == '1')
-	{
-	$retorno = '1';// accedo si es modo root o tecnico
-	}
-
-	return $retorno;	
+    // Compatibilidad: usa la identidad autenticada y la autorizacion central.
+    require_once __DIR__.'/../../lib/app.php';
+    $usuario=app_user();
+    if (!$usuario || $usuario['id']!==(int)$sesion_system_03) return '0';
+    $modulo=app_db()->one('SELECT system_01_path_home FROM system_01_modulos WHERE id_system_01=?','i',[(int)$rela_system_01]);
+    return $modulo && app_can($modulo['system_01_path_home'],strtoupper((string)$acceso)) ? '1' : '0';
 }
 
 

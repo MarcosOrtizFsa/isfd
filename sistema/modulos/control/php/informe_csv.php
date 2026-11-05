@@ -1,4 +1,8 @@
 <?php
+// Controladores anteriores reemplazados por app_*.php.
+http_response_code(410);
+exit('Esta pantalla fue reemplazada. Ingrese desde mipanel.');
+
 session_start();
 include "../../../../lib/mysql_conect.php";
 include "../../../php/constructor_sql.php";

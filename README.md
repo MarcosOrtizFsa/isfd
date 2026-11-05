@@ -1,83 +1,54 @@
-# ISFD
+# ISFD — Portal institucional Félix Atilio Cabrera
 
-Portal PHP del ISFD con módulos funcionales independientes:
+Proyecto PHP/MySQL modular, con interfaz responsive Bootstrap y navegación parcial jQuery/AJAX. Repositorio: `MarcosOrtizFsa/isfd`. Documentación revisada al código `50de00d`, 4 de noviembre de 2026.
 
-- `home`: portada publica y contenidos provenientes de NEURIA.
-- `login`: autenticacion del equipo administrador.
-- `control`: administracion de usuarios y perfiles.
-- `ofertas`: administración del catálogo académico, publicación y convocatorias.
-- `noticias`: producción editorial y revisión de contenidos ofrecidos por NEURIA.
-- `root`: configuracion interna de modulos, exclusiva del desarrollador root.
+## Documentación
 
-## Requisitos
+- [Manual técnico](docs/MANUAL_TECNICO.md): arquitectura, tecnologías, recursos, APIs, datos, operación y colaboración humano/agente IA.
+- [Manual básico del administrador](docs/MANUAL_ADMINISTRADOR.md): instrucciones de uso del sistema.
+- [Índice de documentación](docs/INDICE.md): guías por dominio.
+- [Importación y despliegue](database/IMPORTACION_PRODUCCION.md): migraciones hasta 020 y actualización de producción.
 
-- Apache con `mod_rewrite`.
-- PHP 8.2 o superior con `mysqli`, `curl` y `mbstring`.
-- MySQL/MariaDB con la base existente `isfd_formosa`.
+## Áreas funcionales
 
-## Configuracion
+| Área | Función |
+|---|---|
+| Home | Portada, catálogo, noticias locales activas, contenido institucional y contacto. |
+| Login / Control | Acceso y administración de usuarios del equipo. |
+| Ofertas | ABM de ofertas/categorías, multimedia, convocatorias y plan de estudios. |
+| Noticias | Edición, adjuntos independientes, solicitudes IA y recepción/sincronización con NEURIA. |
+| Contactos | Consultas, preinscripciones y acceso al administrador del chat. |
+| Root | Módulos internos, configuración de dominio y credenciales de integración. |
+| Chat | Comunidad con cuentas propias, moderación y transporte WebSocket con respaldo AJAX. |
+| Preinscripción | Formulario institucional con selección de carrera y seguimiento interno. |
 
-La conexion utiliza estas variables de entorno. Los valores locales conservan
-compatibilidad con XAMPP, pero no deben utilizarse en produccion.
+NEURIA centraliza la producción/distribución asistida por IA. ISFD conserva la revisión humana y publica desde su propia BD. El chat no es un chatbot de IA. El desarrollo del portal combina la dirección y validación del responsable humano con implementación, pruebas y documentación asistidas por Codex; las responsabilidades se explican en el manual técnico.
 
-```text
-ISFD_DB_HOST=localhost
-ISFD_DB_USER=usuario_isfd
-ISFD_DB_PASSWORD=clave-segura
-ISFD_DB_NAME=isfd_formosa
-```
+## Entorno
 
-La configuracion privada de NEURIA se documenta en
-`CONFIGURACION_NEURIA.md`. Su cliente, sanitizador y endpoint interno son una
-unidad independiente del administrador.
+Apache con mod_rewrite; PHP 8.2+, mysqli/mysqlnd, cURL, mbstring, DOM, iconv, OpenSSL, GD, fileinfo y ZipArchive; MySQL/MariaDB con InnoDB. La instalación requiere el esquema histórico del sistema y las migraciones correspondientes: no es suficiente crear una base vacía y ejecutar únicamente 020.
 
-## Flujo de la aplicacion
+La conexión se resuelve mediante `lib/mysql_conect.php`; conservar el adaptador y los valores del entorno de destino. Nunca versionar ni publicar contraseñas reales, `.env` o tokens. La configuración vigente de NEURIA se explica en [NEURIA_V1.md](docs/NEURIA_V1.md); [CONFIGURACION_NEURIA.md](CONFIGURACION_NEURIA.md) distingue el cliente actual del legado.
 
-`index.php` carga el shell de `sistema/app_index.php`. El shell inyecta un token
-CSRF y carga cada modulo dentro de `#content_seccion` mediante `cargar_post()`.
-Las mutaciones usan `appAction()` y siempre validan sesion, rol y CSRF en PHP.
+El shell `sistema/app_index.php` carga módulos dentro de `#content_seccion`. `lib/app.php` centraliza BD, sesiones, autorización, CSRF, escape y auditoría. Mantener este flujo al extender el proyecto.
 
-El codigo comun esta en `lib/app.php`:
+Rutas públicas: `/`, `/nota/{id}/{slug}`, `/oferta/{slug}`, `/chat/`, `/preinscripcion/`. Acceso administrativo: `/mipanel`.
 
-- conexion MySQL con consultas preparadas;
-- sesion y cookies seguras;
-- autenticacion y autorizacion por modo;
-- proteccion CSRF;
-- respuestas JSON y registro de auditoria.
+## WebSocket y procesos
 
-## Claves
+El servidor WebSocket utiliza Ratchet/ReactPHP y Composer en `chat/server/`. Necesita un proceso persistente y proxy WSS para producción; su habilitación depende del hosting. Sin URL WSS se utiliza AJAX. Ver [Chat WebSocket](docs/CHAT_WEBSOCKET.md). No se necesita Node.js para servir PHP; se utiliza para comprobaciones y pruebas JavaScript en desarrollo.
 
-Las cuentas nuevas usan `password_hash()`. Una cuenta historica con SHA-1 se
-migra automaticamente al primer ingreso correcto; no es necesario conocer ni
-reiniciar su clave.
+## Verificación
 
-## Verificacion
+Consultar requisitos y efectos de cada prueba antes de ejecutarla. Algunas crean bases efímeras; otras usan HTTP local y datos temporales. No ejecutar indiscriminadamente en producción.
 
 ```text
 php -l lib/app.php
-php -l sistema/app_index.php
 node --check scripts/app_ajax.js
-node --check scripts/js_codex.js
+node --check scripts/portal.js
+php tests/noticias_adjuntos_test.php
+php tests/categorias_test.php
+php tests/preinscripciones_test.php
 ```
 
-La portada se abre en `/` y el acceso administrativo en `/mipanel`.
-
-## Catálogo académico
-
-El árbol de categorías, las reglas de carga, los filtros y las migraciones del
-catálogo están documentados en [docs/CATALOGO.md](docs/CATALOGO.md). El modelo
-entidad-relación se encuentra en [docs/catalogo-er.md](docs/catalogo-er.md).
-
-## Noticias y Neuria
-
-El flujo editorial, los estados, la importación controlada y las reglas de
-archivos están documentados en [docs/NOTICIAS.md](docs/NOTICIAS.md).
-
-La sincronización incremental con la API v1 de Neuria se documenta en
-[docs/NEURIA_V1.md](docs/NEURIA_V1.md).
-
-## Importación en producción
-
-El orden de las migraciones y el último paso manual para hosting compartido se
-detallan en [database/IMPORTACION_PRODUCCION.md](database/IMPORTACION_PRODUCCION.md).
-
+El manual técnico contiene el inventario de pruebas y las limitaciones conocidas. Git conserva código y migraciones; respaldar aparte BD, uploads y configuración privada.

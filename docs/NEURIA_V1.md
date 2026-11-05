@@ -1,5 +1,7 @@
 # Integración Neuria API v1
 
+Revisado: 4 de noviembre de 2026. NEURIA es el servicio central de producción y distribución asistida por IA; ISFD mantiene la edición, autorización de publicación y persistencia local. El backend Laravel 13 de NEURIA pertenece a otro proyecto. No hay un SDK de modelo generativo conectado directamente a la portada ni envío de conversaciones del chat a NEURIA.
+
 La API se consulta únicamente desde el servidor. El sincronizador importa cada
 contenido en `noticias` como `pendiente`; la portada sigue leyendo la base local
 y no depende de la disponibilidad de Neuria.
@@ -73,3 +75,25 @@ No activar el cron hasta validar manualmente identidad, permisos e importación.
 - `CONTENT_WITHDRAWN`: bloquea y conserva el registro suspendido.
 
 Las pruebas de `tests/neuria_v1_sync_test.php` usan exclusivamente el mock local.
+
+## Recuperación de solicitudes en ERROR
+
+`sincronizarPendientes()` vuelve a consultar los registros ERROR. Un reintento en NEURIA puede llevarlos a PENDIENTE, INVESTIGANDO, GENERANDO o COMPLETADA. La actualización conserva UUID, actualiza estado/progreso y limpia `error_message` cuando el nuevo estado ya no es ERROR. Si deja de ser terminal, limpia `completed_at`.
+
+Al completarse, descarga los contenidos de destinos completados. Los UUID únicos y la importación transaccional evitan duplicados; una descarga fallida revierte la actualización para que pueda reintentarse. COMPLETADA, PARCIALMENTE_COMPLETADA y CANCELADA se excluyen de la consulta periódica actual.
+
+## Texto y revisión humana
+
+El cuerpo recibido de NEURIA se conserva como texto plano, sin agregar envoltorios `<p>` al guardar. El editor mantiene separaciones entre párrafos y la vista pública prepara su presentación. La sincronización conserva originales remotos y no reemplaza silenciosamente la versión editada por el administrador.
+
+La generación asistida no confirma exactitud, pertinencia ni autorización institucional. El responsable humano revisa datos, fuentes y redacción antes de activar la noticia. Esta IA operativa es distinta del agente Codex utilizado para desarrollar el sitio.
+
+## Diagnóstico desde Noticias
+
+`app_neuria_status.php` consulta `GET /api/v1/me` al ingresar al módulo y al pulsar Volver a comprobar. Usa timeout máximo de cinco segundos, sin reintentos; muestra conexión/autenticación, no ejecución de cron ni éxito de generación. El diagnóstico no modifica los cursores.
+
+El endpoint requiere modo 0, 1 o 2 y CSRF; no entrega tokens ni respuesta cruda. Trata una credencial desactivada como integración desactivada. El cliente general mantiene fallback al entorno cuando no obtiene una configuración activa/descifrable de BD: revisar entorno y tareas programadas si se necesita detener toda comunicación.
+
+## Endpoints consumidos
+
+`GET /api/v1/me`, `GET /api/v1/contents`, `GET /api/v1/contents/{uuid}`, `GET /api/v1/changes`, `POST /api/v1/requests` y `GET /api/v1/requests/{uuid}`. Autenticación Bearer desde PHP. Scopes utilizados durante la integración: `content:read`, `requests:write`. El contrato interno real de cada respuesta debe validarse con el proveedor; no enviar secretos del proyecto en descripciones ni URLs iniciales.

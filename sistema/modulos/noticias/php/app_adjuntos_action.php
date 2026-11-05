@@ -2,9 +2,10 @@
 declare(strict_types=1);
 require __DIR__.'/../../../../lib/app.php';
 require __DIR__.'/adjuntos_soporte.php';
-$usuario=app_require_mode([0,1,2]);
+$usuario=app_require_permission('noticias');
 app_verify_csrf();
 $db=app_db();$id=app_int('noticia_id');$accion=app_post('action');
+app_require_permission('noticias',in_array($accion,['file_remove','video_remove'],true)?'B':'M');
 try {
     if ($accion==='upload') {
         $archivos=noticia_archivos_validar($_FILES['archivos']??[],app_post('tipo'));

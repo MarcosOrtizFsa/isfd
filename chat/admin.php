@@ -1,11 +1,14 @@
 <?php
 declare(strict_types=1);
 require __DIR__.'/lib/realtime.php';
-$admin=app_require_mode([0]);
+$admin=app_require_permission('contactos');
 header('Cache-Control: no-store');
 $chat=new Chat(app_db());
 if ($_SERVER['REQUEST_METHOD']==='POST') {
     app_verify_csrf();
+    $permisos=['advertir'=>'M','descartar'=>'M','ocultar'=>'B','suspender'=>'E','expulsar'=>'E','rehabilitar'=>'E'];
+    if(!isset($permisos[app_post('accion')])) app_json(['ok'=>false,'message'=>'Acción inválida.'],400);
+    app_require_permission('contactos',$permisos[app_post('accion')]);
     try {
         $chat->moderacion($admin['id'],app_int('usuario_id'),app_int('reporte_id'),app_post('accion'),app_post('motivo'));
         (new ChatRealtime(app_db()))->notificar();
@@ -19,12 +22,12 @@ $reports=app_db()->all("SELECT r.*,u.usuario,d.usuario denunciante FROM chat_rep
 $users=app_db()->all("SELECT id,usuario,avatar_id,bloqueado,suspendido_hasta,created_at FROM chat_usuarios WHERE usuario LIKE ? ORDER BY id DESC LIMIT 30 OFFSET $offset",'s',['%'.$search.'%']);
 $audit=app_db()->all('SELECT a.*,u.usuario FROM chat_auditoria a JOIN chat_usuarios u ON u.id=a.usuario_id ORDER BY a.id DESC LIMIT 30');
 $pending=(int)app_db()->one("SELECT COUNT(*) n FROM chat_reportes WHERE estado='pendiente'")['n'];
-function chat_admin_actions(int $user, int $report=0): void { ?>
+function chat_admin_actions(int $user, int $report=0): void { if (!app_can('contactos','M')&&!app_can('contactos','E')&&!($report&&app_can('contactos','B'))) return; ?>
     <form class="moderation-form row g-2">
         <input type="hidden" name="usuario_id" value="<?=$user?>"><input type="hidden" name="reporte_id" value="<?=$report?>">
         <div class="col-md-4"><label class="visually-hidden">Acción</label><select name="accion" class="form-select form-select-sm" aria-label="Acción de moderación">
-            <option value="advertir">Advertencia escrita</option><option value="suspender">Pausa de 24 horas</option><option value="expulsar">Expulsar (reversible)</option><option value="rehabilitar">Rehabilitar</option>
-            <?php if($report):?><option value="ocultar">Retirar mensaje</option><option value="descartar">Descartar reporte</option><?php endif;?>
+            <?php if(app_can('contactos','M')): ?><option value="advertir">Advertencia escrita</option><?php endif; ?><?php if(app_can('contactos','E')): ?><option value="suspender">Pausa de 24 horas</option><?php endif; ?><?php if(app_can('contactos','E')): ?><option value="expulsar">Expulsar (reversible)</option><?php endif; ?><?php if(app_can('contactos','E')): ?><option value="rehabilitar">Rehabilitar</option><?php endif; ?>
+            <?php if($report):?><?php if(app_can('contactos','B')): ?><option value="ocultar">Retirar mensaje</option><?php endif; ?><?php if(app_can('contactos','M')): ?><option value="descartar">Descartar reporte</option><?php endif; ?><?php endif;?>
         </select></div>
         <div class="col-md-5"><input class="form-control form-control-sm" name="motivo" minlength="5" maxlength="500" placeholder="Motivo de la decisión" aria-label="Motivo de la decisión" required></div>
         <div class="col-md-3"><button class="btn btn-sm btn-outline-primary w-100" type="submit">Aplicar</button></div>
@@ -32,7 +35,7 @@ function chat_admin_actions(int $user, int $report=0): void { ?>
 <?php } ?>
 <!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="csrf-token" content="<?=app_escape(app_csrf_token())?>"><title>Administrar chat · ISFD</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"><link href="../css/app_admin.css" rel="stylesheet"></head>
 <body class="bg-light"><main class="container py-4">
-    <div class="d-flex justify-content-between align-items-center gap-3 mb-4"><div><h1 class="h3">Chat institucional</h1><p class="text-secondary mb-0">Moderación y participantes · acceso exclusivo root</p></div><a class="btn btn-outline-secondary" href="../mipanel">Volver a mipanel</a></div>
+    <div class="d-flex justify-content-between align-items-center gap-3 mb-4"><div><h1 class="h3">Chat institucional</h1><p class="text-secondary mb-0">Moderación y participantes · acceso según permisos de Contactos</p></div><a class="btn btn-outline-secondary" href="../mipanel">Volver a mipanel</a></div>
     <div id="admin-status" role="status" aria-live="polite"></div>
     <div class="alert alert-info">Revisá el contexto antes de sancionar. Los filtros automáticos son orientativos. Las pausas automáticas duran 10 minutos; podés revertirlas con <strong>Rehabilitar</strong>. Una expulsión siempre requiere tu decisión y queda registrada.</div>
     <div id="admin-content">

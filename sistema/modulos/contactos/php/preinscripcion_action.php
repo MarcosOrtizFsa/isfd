@@ -2,8 +2,10 @@
 declare(strict_types=1);
 require __DIR__.'/../../../../lib/app.php';
 require __DIR__.'/../../../../preinscripcion/servicio.php';
-$usuario=app_require_mode([0]);
+$usuario=app_require_permission('contactos','M');
 app_verify_csrf();
+$actual=app_db()->one('SELECT estado FROM portal_preinscripciones WHERE id=?','i',[app_int('id')]);
+app_guard_state('contactos','estado',$actual['estado']??'');
 try {
     (new Preinscripciones(app_db()))->gestionar(app_int('id'),app_post('estado'),app_post('nota'),(int)$usuario['id'],app_post('estado_anterior'));
     app_log('PREINSCRIPCION_GESTION','Solicitud '.app_int('id').' '.app_post('estado'));

@@ -20,7 +20,11 @@ El comando crea las tablas de la migración 014 y carga la primera revisión de 
 
 Cada guardado crea una instantánea completa de la sección y la publica dentro de una transacción. Las revisiones anteriores no se sobrescriben. Se bloquea la sección y se compara la versión enviada para evitar que una edición concurrente borre cambios.
 
-El año es un período informativo, no una programación automática: guardar publica inmediatamente. Para recuperar contenido anterior, consultar el historial y copiarlo en una nueva revisión indicando el motivo. Las autoridades se ingresan con una línea por cargo, usando `Cargo | Nombre`. La historia admite un párrafo por línea. Los campos son texto plano y se escapan al mostrarlos.
+El año es un período informativo, no una programación automática: guardar publica inmediatamente. Para recuperar contenido anterior, consultar el historial y copiarlo en una nueva revisión indicando el motivo. La historia admite un párrafo por línea. Los campos son texto plano y se escapan al mostrarlos.
+
+Actualización del 4 de noviembre de 2026: las autoridades de la portada se administran mediante fichas propias, no mediante el antiguo texto `Cargo | Nombre`, que permanece por compatibilidad. Ver [AUTORIDADES.md](AUTORIDADES.md). Los videos institucionales tienen su lista versionada y controles específicos: [VIDEOS_INSTITUCIONALES.md](VIDEOS_INSTITUCIONALES.md).
+
+En Enlaces e imágenes institucionales, `preinscripcion_url` vacía activa el formulario propio `/preinscripcion/`; una URL configurada conserva el destino externo. Desde una oferta abierta se preselecciona la carrera en el formulario interno. Los contadores 1–4 no recibieron un nuevo uso público.
 
 La configuración técnica conserva dominio, metadatos y redes en system_08_configuracion. Los antiguos contactos permanecen en esa tabla como respaldo, pero la portada usa los contactos versionados. El archivo datos_institucionales.php adapta los datos de BD a las vistas existentes; portal_institucional.php mantiene la presentación segura de enlaces y redes.
 

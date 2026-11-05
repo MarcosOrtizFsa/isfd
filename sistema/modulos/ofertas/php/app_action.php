@@ -1,10 +1,12 @@
 <?php
 declare(strict_types=1);
 require __DIR__ . '/../../../../lib/app.php';
-app_require_mode([0,1,2]);
+app_require_permission('ofertas');
 app_verify_csrf();
 
 $db=app_db();$action=app_post('action');$id=app_int('id');
+app_require_permission('ofertas', $action === 'save' ? ($id ? 'M' : 'A') : ($action === 'archive' ? 'B' : 'E'));
+
 $moduleId=(int)($db->one("SELECT id_system_01 FROM system_01_modulos WHERE system_01_path_home='ofertas' LIMIT 1")['id_system_01']??0);
 
 if(in_array($action,['publication','archive','restore'],true)){
@@ -67,6 +69,12 @@ function oferta_eliminar_imagen_local(string $url): void
     if($real!==''&&str_starts_with($real,$root.'/uploads/ofertas/'))@unlink($real);
 }
 
+// Los estados se comparan con la BD, nunca con valores ocultos del navegador.
+$actual=$id?$db->one('SELECT estado_oferta,estado_publicacion FROM ofertas WHERE id=?','i',[$id]):null;
+app_guard_state('ofertas','estado_oferta',$actual['estado_oferta']??'proximamente');
+app_guard_state('ofertas','estado_publicacion',$actual['estado_publicacion']??'borrador');
+$convocatoria=$db->one('SELECT estado FROM oferta_convocatorias WHERE id=? AND oferta_id=?','ii',[app_int('convocatoria_id'),$id]);
+app_guard_state('ofertas','convocatoria_estado',$convocatoria['estado']??'programada');
 $title=app_post('titulo');$slug=oferta_slug($title);$categoryId=app_int('categoria_id');$unitId=app_int('unidad_academica_id');$modalityId=app_int('modalidad_id');
 $summary=app_post('resumen');$description=app_post('descripcion');$graduateTitle=app_post('titulo_otorgado');$profile=app_post('perfil_egresado');$requirements=app_post('requisitos_ingreso');
 $durationRaw=app_post('duracion_valor');$duration=$durationRaw===''?null:(float)$durationRaw;$durationUnit=app_post('duracion_unidad')?:null;$hoursRaw=app_post('carga_horaria');$hours=$hoursRaw===''?null:(int)$hoursRaw;

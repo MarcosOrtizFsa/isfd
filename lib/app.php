@@ -111,11 +111,17 @@ function app_user(): ?array
     if (empty($_SESSION['user_id'])) {
         return null;
     }
+    // Revalidar por petición: revocaciones, bajas y cambios de rol afectan sesiones abiertas.
+    static $cuentas=[];
+    $id=(int)$_SESSION['user_id'];
+    if (!array_key_exists($id,$cuentas)) $cuentas[$id]=app_db()->one('SELECT id_system_03,rela_system_07,rela_system_06,system_03_modo,system_03_estado FROM system_03_usuarios WHERE id_system_03=?','i',[$id]);
+    $cuenta=$cuentas[$id];
+    if (!$cuenta || (int)$cuenta['system_03_estado']!==1) return null;
     return [
         'id' => (int) $_SESSION['user_id'],
-        'role_id' => (int) ($_SESSION['role_id'] ?? 0),
-        'site_id' => (int) ($_SESSION['site_id'] ?? 0),
-        'mode' => (int) ($_SESSION['user_mode'] ?? 3),
+        'role_id' => (int) $cuenta['rela_system_07'],
+        'site_id' => (int) $cuenta['rela_system_06'],
+        'mode' => (int) $cuenta['system_03_modo'],
         'name' => (string) ($_SESSION['user_name'] ?? 'Usuario'),
     ];
 }
@@ -178,4 +184,6 @@ function app_json(array $payload, int $status = 200): never
     echo json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
+
+require_once __DIR__ . '/permisos.php';
 

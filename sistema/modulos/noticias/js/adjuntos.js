@@ -13,7 +13,8 @@
         ocupado = true;
         datos.append('noticia_id', noticiaId);
         datos.append('csrf_token', $('meta[name="csrf-token"]').attr('content') || '');
-        contenido.find('button').prop('disabled', true);
+        // Restaurar solo los controles habilitados antes de iniciar la petición.
+        var habilitados = contenido.find('button:not(:disabled)').prop('disabled', true);
         $.ajax({url: 'modulos/noticias/php/app_adjuntos_action.php', method: 'POST', data: datos,
             processData: false, contentType: false, dataType: 'json'
         }).done(function (respuesta) {
@@ -22,7 +23,7 @@
             cargar_post('modulos/noticias/php/app_adjuntos.php', 'news-attachments-panel', {noticia_id: noticiaId});
         }).fail(function (xhr) {
             informar((xhr.responseJSON || {}).message || 'La carga no se completó. Revisá el tamaño de los archivos y los límites del servidor.', true);
-        }).always(function () { ocupado = false; contenido.find('button').prop('disabled', false); });
+        }).always(function () { ocupado = false; habilitados.prop('disabled', false); });
     }
     contenido.find('.news-attachment-upload').on('submit', function (event) {
         event.preventDefault(); enviar(new FormData(this));

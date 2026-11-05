@@ -14,9 +14,12 @@ if ($user !== null) {
     if ($user['mode'] === 0) {
         array_unshift($modules, ['id_system_01' => 1, 'system_01_modulo' => 'Modulos', 'system_01_path_home' => 'root']);
     }
+    $shown=[];
     foreach ($modules as $module) {
         $path = (string) $module['system_01_path_home'];
-        if (!in_array($path, ['home', 'control', 'ofertas', 'noticias', 'contactos', 'root'], true) || (in_array($path,['root','contactos'],true) && $user['mode'] !== 0)) {
+        if(isset($shown[$path])) continue;
+        $shown[$path]=true;
+        if (!in_array($path, ['home', 'control', 'ofertas', 'noticias', 'contactos', 'root'], true) || !app_can($path)) {
             continue;
         }
         $navigation .= sprintf('<li class="nav-item"><button class="nav-link btn btn-link" data-module="%s" data-module-id="%d">%s</button></li>', app_escape($path), (int) $module['id_system_01'], app_escape($module['system_01_modulo']));
@@ -36,7 +39,7 @@ if ($requestedModule === 'login' && $user === null) {
     $initialUrl = 'modulos/home/php/oferta_leer.php';
     $initialData['slug'] = preg_replace('/[^a-z0-9-]/', '', strtolower((string) ($_GET['slug'] ?? '')));
 } elseif ($user !== null && in_array($requestedModule, ['control', 'ofertas', 'noticias', 'contactos', 'root'], true)) {
-    if (!in_array($requestedModule,['root','contactos'],true) || $user['mode'] === 0) {
+    if (app_can($requestedModule)) {
         $initialUrl = 'modulos/' . $requestedModule . '/php/app_home.php';
     }
 }

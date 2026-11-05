@@ -1,12 +1,13 @@
 <?php
 declare(strict_types=1);
 require __DIR__ . '/../../../../lib/app.php';
-$current = app_require_mode([0, 1, 2]);
+$current = app_require_permission('control',app_int('id')?'M':'A');
 $id = app_int('id');
 $db = app_db();
 $record = $id ? $db->one('SELECT u.*, p.* FROM system_03_usuarios u LEFT JOIN system_04_perfil p ON p.rela_system_03=u.id_system_03 WHERE u.id_system_03=?', 'i', [$id]) : null;
 if ($id && $record === null) { http_response_code(404); exit('Usuario inexistente.'); }
-$roles = $db->all('SELECT id_system_07, system_07_nombre FROM system_07_privilegios WHERE id_system_07 <> 1 OR ? = 0 ORDER BY id_system_07', 'i', [$current['mode']]);
+if ($record && !app_can_manage_user($current,$record)) { http_response_code(403); exit('No tenés permisos sobre esta cuenta.'); }
+$roles = $db->all('SELECT id_system_07, system_07_nombre FROM system_07_privilegios WHERE id_system_07 > ? ORDER BY id_system_07', 'i', [$current['mode']===0?0:$current['role_id']]);
 ?>
 <div class="card admin-card mb-4"><div class="card-body p-4"><div class="d-flex justify-content-between"><h2 class="h5"><?=$id?'Editar usuario':'Nuevo usuario'?></h2><button class="btn-close" type="button" onclick="$('#control-panel').empty()" aria-label="Cerrar"></button></div>
 <form id="user-form" class="row g-3 mt-1">

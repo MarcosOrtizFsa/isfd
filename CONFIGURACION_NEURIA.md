@@ -1,51 +1,29 @@
-# Configuración privada de NEURIA
+# Configuración de NEURIA
 
-La integración lee estas variables del entorno del proceso PHP/Apache:
+Actualizado: 4 de noviembre de 2026.
 
-```text
-NEURIA_API_URL=https://dominio-base-de-neuria.example
-NEURIA_CLIENT_ID=identificador-asignado
-NEURIA_API_TOKEN=token-privado
+## Integración vigente: API v1
+
+La integración editorial y el Agente IA utilizan el cliente de `sistema/modulos/noticias/php/neuria_v1_cliente.php`. Ver [NEURIA_V1.md](docs/NEURIA_V1.md) para contratos, estados y sincronización.
+
+Root administra la credencial en **Módulos internos → Credenciales Neuria**. El token es el emitido por NEURIA para ISFD; se cifra en BD con AES-256-GCM. La clave maestra se mantiene en el entorno privado:
+
+```dotenv
+ISFD_CREDENTIAL_KEY=CLAVE-ALEATORIA-PRIVADA-DE-AL-MENOS-32-CARACTERES
+NEURIA_API_URL=https://neuriar.com.ar
+NEURIA_API_TOKEN=TOKEN-DEL-MEDIO
+NEURIA_API_TIMEOUT=30
+NEURIA_SYNC_LIMIT=50
 ```
 
-No guardar valores reales en este repositorio, JavaScript, HTML, `.htaccess` público ni URLs.
+Son ejemplos; no reemplazar una clave maestra existente ni guardar valores reales en Git. La configuración activa y descifrable de BD tiene prioridad. Si no se obtiene, el cliente puede usar las variables del entorno. Revisar también esas variables y los cron al deshabilitar operativamente una integración.
 
-## Prueba temporal dentro del proyecto
+La API v1 no requiere `NEURIA_CLIENT_ID`. La base se configura sin repetir `/api/v1`; el cliente agrega las rutas. Los lectores v1 cargan el `.env` de la raíz, mientras que otras partes del proyecto pueden depender directamente del entorno del proceso.
 
-Durante el desarrollo local se puede completar:
+Las migraciones 008, 009 y 010 agregan sincronización, solicitudes y credenciales respectivamente. El indicador de Noticias comprueba identidad/autenticación, no ejecuta sincronización.
 
-```text
-config_private/neuria.local.php
-```
+## Compatibilidad histórica
 
-La carpeta está bloqueada por Apache y el archivo se encuentra excluido mediante
-`.gitignore`. Las variables de entorno completas siempre tienen prioridad sobre
-esta configuración local.
+`home/php/neuria_cliente.php` y `config_private/neuria.local.php` corresponden al cliente anterior. Aquel protocolo utilizaba `NEURIA_CLIENT_ID`, el endpoint `/sistema/modulos/api_clientes/php/api_contenido.php` y caché temporal. Se conserva para recorridos heredados; no utilizarlo como guía para configurar la integración Laravel/API v1.
 
-En Apache pueden definirse en la configuración privada del VirtualHost o mediante
-variables del servicio, siempre fuera del directorio público. Después de cambiarlas,
-reiniciar Apache para que PHP reciba los nuevos valores.
-
-El cliente agrega exactamente esta ruta a `NEURIA_API_URL`:
-
-```text
-/sistema/modulos/api_clientes/php/api_contenido.php
-```
-
-Por compatibilidad local también se acepta el endpoint completo; internamente se
-normaliza antes de efectuar la consulta.
-
-La caché dura 300 segundos y se guarda fuera del sitio público, dentro del directorio
-temporal del servidor. Si NEURIA falla y existe una copia anterior, se utiliza esa copia.
-
-## Verificación local
-
-Con PHP CLI disponible:
-
-```text
-php tests/neuria_cliente_test.php
-node --check scripts/js_codex.js
-```
-
-El primer test requiere iniciar el mock incluido en `tests/neuria_mock_router.php` en
-`127.0.0.1:18087`, tal como se hace durante la verificación de desarrollo.
+No copiar archivos privados locales al hosting ni incluir tokens en HTML, JavaScript, URLs, capturas o documentación. Conservar la clave de cifrado y la conexión de producción al desplegar código.

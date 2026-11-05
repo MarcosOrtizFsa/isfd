@@ -2,7 +2,7 @@
 declare(strict_types=1);
 require __DIR__.'/../../../../lib/app.php';
 require __DIR__.'/../../../../preinscripcion/servicio.php';
-app_require_mode([0]);
+app_require_permission('contactos');
 $db=app_db();
 $anio=max(2000,min(2200,app_int('anio',(int)date('Y'))));
 $oferta=app_int('oferta_id');

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 require __DIR__ . '/../../../../lib/app.php';
-app_require_mode([0, 1, 2]);
+app_require_permission('noticias','A');
 
 // Ayudas accesibles por teclado y toque, con el mismo estilo del administrador.
 $ayuda = static function (string $campo, string $texto): string {

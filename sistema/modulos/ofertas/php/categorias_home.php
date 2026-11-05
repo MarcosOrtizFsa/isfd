@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 require __DIR__.'/../../../../lib/app.php';
-app_require_mode([0,1,2]);
+app_require_permission('ofertas');
 $categorias = app_db()->all('SELECT c.*,n.nombre nivel,p.nombre padre,
     (SELECT COUNT(*) FROM ofertas o WHERE o.categoria_id=c.id) ofertas
     FROM catalogo_categorias c JOIN catalogo_niveles n ON n.id=c.nivel_id
@@ -12,7 +12,7 @@ $categorias = app_db()->all('SELECT c.*,n.nombre nivel,p.nombre padre,
         <div><h1 class="h3">Categorías de ofertas</h1><p class="text-secondary mb-0">El filtro público muestra categorías activas con ofertas publicadas. Desactivar una categoría oculta también su rama en la portada.</p></div>
         <div class="d-flex flex-wrap gap-2 align-items-start">
             <button class="btn btn-outline-secondary" onclick="cargar_post('modulos/ofertas/php/app_home.php','content_seccion','')">Volver a ofertas</button>
-            <button class="btn btn-primary" onclick="categoriasEditar(0)"><i class="bi bi-plus-lg me-2"></i>Nueva categoría</button>
+            <button <?=app_permission_attrs('ofertas','A')?> class="btn btn-primary" onclick="categoriasEditar(0)"><i class="bi bi-plus-lg me-2"></i>Nueva categoría</button>
         </div>
     </div>
     <div id="categories-panel"></div>
@@ -29,9 +29,9 @@ $categorias = app_db()->all('SELECT c.*,n.nombre nivel,p.nombre padre,
                     <td><?=(int)$categoria['orden']?></td>
                     <td><span class="badge <?=$categoria['activo'] ? 'text-bg-success' : 'text-bg-secondary'?>"><?=$categoria['activo'] ? 'Activa' : 'Inactiva'?></span></td>
                     <td class="text-end"><div class="btn-group btn-group-sm">
-                        <button class="btn btn-outline-primary" onclick="categoriasEditar(<?=$id?>)" title="Editar" aria-label="Editar"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-outline-secondary" onclick="categoriasAccion('toggle',<?=$id?>)" title="Activar / desactivar" aria-label="Activar / desactivar"><i class="bi bi-eye"></i></button>
-                        <button class="btn btn-outline-danger" onclick="categoriasAccion('delete',<?=$id?>)" title="Eliminar" aria-label="Eliminar"><i class="bi bi-trash"></i></button>
+                        <button <?=app_permission_attrs('ofertas','M')?> class="btn btn-outline-primary" onclick="categoriasEditar(<?=$id?>)" title="Editar" aria-label="Editar"><i class="bi bi-pencil"></i></button>
+                        <button <?=app_permission_attrs('ofertas','E')?> class="btn btn-outline-secondary" onclick="categoriasAccion('toggle',<?=$id?>)" title="Activar / desactivar" aria-label="Activar / desactivar"><i class="bi bi-eye"></i></button>
+                        <button <?=app_permission_attrs('ofertas','B')?> class="btn btn-outline-danger" onclick="categoriasAccion('delete',<?=$id?>)" title="Eliminar" aria-label="Eliminar"><i class="bi bi-trash"></i></button>
                     </div></td>
                 </tr>
             <?php endforeach; ?>

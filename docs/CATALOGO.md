@@ -1,5 +1,19 @@
 # Catálogo de ofertas académicas
 
+## Administración vigente (actualización del 4 de noviembre de 2026)
+
+El botón **CATEGORÍAS** en Ofertas abre el ABM AJAX de las categorías existentes. Permite crear, editar nombre/descripción/orden/estado, activar/desactivar y eliminar únicamente categorías sin ofertas ni hijas. La ubicación jerárquica y el slug de una categoría existente se conservan al editar; el formulario no implementa movimiento de ramas.
+
+`categorias_servicio.php` valida nivel, profundidad máxima, tipo de categoría y relaciones dentro de una transacción. Genera slugs únicos y rutas para las nuevas categorías; funciona sin depender de que las rutinas opcionales estén instaladas y es compatible con los triggers existentes.
+
+El filtro **Tipo** de la portada consulta categorías finales activas, con nivel y ancestros activos, y al menos una oferta publicada/no eliminada. Las categorías vacías o con solo borradores no aparecen. La misma visibilidad de rama se aplica al listado, detalle y conteos públicos. Una oferta publicada con inscripción cerrada puede aparecer como contenido académico: inscripción y publicación son estados distintos.
+
+En el formulario actual, el slug de la oferta se genera automáticamente; Perfil del egresado se presenta como **A quién está dirigido**. La imagen se carga con vista previa, se admite YouTube y se administra plan de estudios. Turnos, áreas, norma de aprobación y URL individual de preinscripción no se ofrecen como campos de ese formulario aunque existan estructuras históricas relacionadas.
+
+La preinscripción usa el enlace institucional externo o, si está vacío, el formulario propio. El botón en la oferta requiere `estado_oferta=inscripcion_abierta`; el formulario público además valida publicación, baja lógica y rama activa. Véase [PREINSCRIPCIONES.md](PREINSCRIPCIONES.md).
+
+El ABM de categorías no requiere migración adicional. Prueba específica: `tests/categorias_test.php`, con BD efímera. Las secciones SQL siguientes documentan el modelo y herramientas de mantenimiento; los procedimientos requieren que se haya aplicado el paso manual 007. Para una actualización de producción consultar [la guía vigente](../database/IMPORTACION_PRODUCCION.md), no tomar la lista histórica inicial como instalación completa del portal.
+
 ## Modelo
 
 El catálogo separa tres conceptos: `catalogo_niveles` contiene Educación Básica y Educación Superior; `catalogo_categorias` forma un árbol editable; y `ofertas` contiene las propuestas concretas, vinculadas únicamente con categorías hoja activas.
@@ -29,7 +43,7 @@ Para revertir la segunda migración se ejecuta `database/migrations/002_catalogo
 - Las bajas de ofertas son lógicas mediante `deleted_at`.
 - Las consultas conservan `ip_hash`; no se guarda la dirección IP en texto plano.
 
-Las reglas críticas se validan con triggers para cubrir el futuro administrador, importaciones y tareas programadas. El movimiento se concentra en un procedimiento porque afecta varias filas de forma atómica.
+Los triggers del paso manual 007 agregan validación para escrituras, importaciones y tareas programadas cuando están instalados. El administrador actual también valida sus operaciones en PHP. El movimiento de ramas se concentra en un procedimiento porque afecta varias filas de forma atómica; no está expuesto en el ABM actual.
 
 ## Agregar una categoría
 
