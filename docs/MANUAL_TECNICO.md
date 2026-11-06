@@ -296,3 +296,7 @@ Diagnóstico: revisar error HTTP y respuesta AJAX, registro PHP/Apache, `system_
 ## Auditoría administrativa
 
 La bitácora utiliza system_05_logistica y app_log(). La consulta paginada está en lib/auditoria.php y el panel exclusivo de Root en sistema/modulos/root/php/app_auditoria.php. Conserva eventos anteriores y agrega clasificación ABME. Cobertura, límites, pruebas y despliegue: [AUDITORIA.md](AUDITORIA.md). No requiere migración nueva.
+
+## Presentación administrativa (noviembre 2026)
+
+app_admin.css define el marco admin-editor y las secciones admin-form-section. app_ajax.js asocia etiquetas con controles tras las cargas AJAX y mide la altura del encabezado administrativo con ResizeObserver; la cabecera pública fija utiliza ese desplazamiento. El pie público enlaza a ../mipanel respetando el base del layout. No cambia endpoints, permisos ni esquema de BD.

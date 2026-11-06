@@ -8,7 +8,7 @@ $fila=$db->one('SELECT * FROM portal_preinscripciones WHERE id=?','i',[$id]);
 if (!$fila) {http_response_code(404);exit('Preinscripción inexistente.');}
 $historial=$db->all('SELECT * FROM portal_preinscripcion_historial WHERE preinscripcion_id=? ORDER BY id DESC','i',[$id]);
 ?>
-<div class="card admin-card mb-4"><div class="card-body p-4"><div class="d-flex justify-content-between"><h2 class="h5">Solicitud #<?=$id?> · <?=app_escape($fila['nombre'].' '.$fila['apellido'])?></h2><button class="btn-close" aria-label="Cerrar" onclick="$('#preinscripcion-panel').empty()"></button></div>
+<div class="card admin-card admin-editor mb-4"><div class="card-body p-4"><div class="d-flex justify-content-between"><h2 class="h5">Solicitud #<?=$id?> · <?=app_escape($fila['nombre'].' '.$fila['apellido'])?></h2><button class="btn-close" aria-label="Cerrar" onclick="$('#preinscripcion-panel').empty()"></button></div>
 <p><strong><?=app_escape($fila['oferta_titulo'])?></strong><br>DNI: <?=app_escape($fila['dni'])?><br><a href="mailto:<?=app_escape($fila['email'])?>"><?=app_escape($fila['email'])?></a> · <a href="tel:<?=app_escape(str_replace(' ','',$fila['telefono']))?>"><?=app_escape($fila['telefono'])?></a></p>
 <p class="small text-secondary">Recibida: <?=app_escape($fila['created_at'])?> · Consentimiento registrado: <?=app_escape($fila['consentimiento_at'])?></p>
 <form id="preinscripcion-management" class="row g-3"><input type="hidden" name="id" value="<?=$id?>"><input type="hidden" name="estado_anterior" value="<?=app_escape($fila['estado'])?>">

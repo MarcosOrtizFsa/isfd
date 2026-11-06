@@ -222,3 +222,7 @@ Para instalación, recursos y mantenimiento consultar el [Manual técnico](MANUA
 ## Registro de acciones — solo Root
 
 En Módulos internos → Registro de acciones podés consultar quién realizó cada operación, su fecha, módulo y detalle. Filtrá por administrador, fechas o A/B/M/E. Se muestran 50 registros por página. El historial es de solo lectura. Ver [Auditoría](AUDITORIA.md).
+
+## Formularios y acceso al panel
+
+El candado del pie público abre Mi Panel. El menú administrativo permanece separado de la cabecera pública. Los editores principales agrupan los datos en secciones numeradas con instrucciones: en Ofertas, identificación, información, plan, imagen/video, fechas y publicación. Completá los campos obligatorios y guardá al finalizar; la agrupación no guarda cada sección por separado. Noticias mantiene el guardado de texto antes de adjuntar archivos.

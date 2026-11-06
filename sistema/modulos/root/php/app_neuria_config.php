@@ -3,7 +3,7 @@ declare(strict_types=1);
 require __DIR__.'/../../../../lib/app.php';require_once __DIR__.'/../../noticias/php/neuria_v1_config.php';app_require_mode([0]);neuria_v1_cargar_env();
 $record=app_db()->one("SELECT * FROM integracion_credenciales WHERE servicio='neuria' LIMIT 1");$keyReady=strlen((string)getenv('ISFD_CREDENTIAL_KEY'))>=32;
 ?>
-<div class="card admin-card mb-4"><div class="card-body p-4">
+<div class="card admin-card admin-editor mb-4"><div class="card-body p-4">
 <div class="d-flex justify-content-between"><div><h2 class="h5 mb-1">Credenciales de Neuria</h2><p class="small text-secondary mb-0">Configuración exclusiva del desarrollador root. El token se almacena cifrado.</p></div><button class="btn-close" onclick="$('#root-panel').empty()" aria-label="Cerrar"></button></div>
 <?php if(!$keyReady):?><div class="alert alert-warning mt-3 mb-0">Antes de guardar un token, configurá <code>ISFD_CREDENTIAL_KEY</code> con al menos 32 caracteres en el archivo privado <code>.env</code>.</div><?php endif;?>
 <form id="neuria-config-form" class="row g-3 mt-1"><input type="hidden" name="action" value="save_neuria">

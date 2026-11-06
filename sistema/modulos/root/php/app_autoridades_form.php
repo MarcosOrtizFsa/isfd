@@ -7,9 +7,10 @@ $db=app_db();
 $row=$id?$db->one('SELECT * FROM institucional_autoridades WHERE id=?','i',[$id]):[];
 if ($id && !$row) { http_response_code(404); exit('Autoridad no encontrada.'); }
 ?>
-<form id="authority-form" class="row g-3 border rounded p-3 mb-4" enctype="multipart/form-data">
+<form id="authority-form" class="row g-3 admin-editor admin-form-section mb-4" enctype="multipart/form-data">
 <div class="col-12 d-flex justify-content-between"><h3 class="h5"><?=$id?'Editar autoridad':'Nueva autoridad'?></h3><button type="button" class="btn-close" onclick="$('#authority-editor').empty()" aria-label="Cerrar"></button></div>
 <input type="hidden" name="id" value="<?=$id?>"><input type="hidden" name="revision" value="<?=(int)($row['revision']??0)?>">
+<p class="col-12 admin-section-help">Completá nombre, apellido, cargo y período. La foto y el saludo son opcionales. Indicá el motivo del cambio para conservarlo en el historial y marcá Visible en la portada cuando corresponda.</p>
 <?php foreach(['nombre'=>'Nombre','apellido'=>'Apellido','cargo'=>'Cargo','profesion'=>'Profesión / título'] as $key=>$label): ?>
 <div class="col-md-6"><label class="form-label" for="authority-<?=$key?>"><?=$label?></label><input id="authority-<?=$key?>" class="form-control" name="<?=$key?>" maxlength="<?=in_array($key,['nombre','apellido'])?120:160?>" value="<?=app_escape($row[$key]??'')?>" <?=$key!=='profesion'?'required':''?>></div>
 <?php endforeach; ?>

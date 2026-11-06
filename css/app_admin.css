@@ -1,12 +1,42 @@
 :root { --admin-bg: #f4f7fb; --admin-primary: #2457a7; --admin-border: #dce3ec; }
 body { background: var(--admin-bg); color: #223044; }
-.admin-shell { position: sticky; top: 0; z-index: 1030; }
+.admin-shell { position: sticky; top: 0; z-index: 1040; box-shadow: 0 2px 12px rgba(25,42,70,.08); }
 .admin-shell .nav-link { color: #44546a; }
 .admin-shell .nav-link:hover { color: var(--admin-primary); }
+.admin-shell .nav-link.active { color: var(--admin-primary); background: #eaf0fa; border-radius: .5rem; font-weight: 600; }
+/* La portada ocupa su propio contexto; su cabecera fija respeta el panel abierto. */
+.isfd-site { position: relative; }
+.has-admin-session .isfd-header.is-scrolled { top: var(--admin-shell-height, 64px); }
+.has-admin-session .isfd-site section { scroll-margin-top: calc(var(--admin-shell-height, 64px) + 95px); }
+.isfd-copyright .container { display: block; }
+.isfd-admin-access { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; vertical-align: middle; border-radius: 4px; text-decoration: none; color: #b5bcc6 !important; }
+.isfd-admin-access:hover, .isfd-admin-access:focus-visible { color: #fff !important; background: #333; outline-offset: 3px; }
 .app-status { position: fixed; top: .75rem; left: 50%; z-index: 2000; transform: translate(-50%, -150%); padding: .45rem .9rem; border-radius: 2rem; background: #152238; color: #fff; opacity: 0; transition: .2s ease; }
 .app-status.is-visible { transform: translate(-50%, 0); opacity: 1; }
 .admin-page { padding: 2rem 0 4rem; }
 .admin-card { border: 1px solid var(--admin-border); border-radius: 1rem; box-shadow: 0 .35rem 1.5rem rgba(25, 42, 70, .06); }
+.admin-editor { max-width: 1160px; margin-inline: auto; border-top: 4px solid var(--admin-primary); scroll-margin-top: calc(var(--admin-shell-height, 64px) + 16px); }
+.admin-editor .card-body { padding: clamp(1rem, 2.5vw, 2rem) !important; }
+.admin-editor h2 { font-size: 1.4rem; font-weight: 650; }
+.admin-editor .form-label { font-size: .9rem; font-weight: 600; margin-bottom: .45rem; }
+.admin-editor .form-control, .admin-editor .form-select { min-height: 44px; border-color: #cbd5e1; border-radius: .5rem; }
+.admin-editor textarea.form-control { line-height: 1.6; min-height: 95px; }
+.admin-editor .form-control:focus, .admin-editor .form-select:focus { border-color: #7297cb; box-shadow: 0 0 0 .2rem rgba(36,87,167,.12); }
+.admin-editor .form-text { color: #596b80; font-size: .8rem; margin-top: .45rem; }
+.admin-form-section { margin-top: 1.5rem; padding: 1.25rem; min-width: 0; background: #f8fafc; border: 1px solid var(--admin-border); border-radius: .75rem; }
+.admin-form-section legend { float: none; width: auto; padding: 0; margin-bottom: .4rem; font-size: 1rem; font-weight: 650; color: #20344f; }
+.admin-section-number { display: inline-grid; place-items: center; width: 28px; height: 28px; margin-right: .5rem; border-radius: 8px; color: var(--admin-primary); background: #e3ecfa; font-size: .8rem; }
+.admin-section-help { margin: 0 0 1.25rem; color: #5e7085; font-size: .85rem; line-height: 1.6; }
+.admin-form-guide { display: flex; gap: .65rem; align-items: flex-start; margin-top: 1.25rem; padding: .9rem 1rem; border-radius: .65rem; color: #35537a; background: #eef4fc; font-size: .85rem; line-height: 1.6; }
+.admin-form-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: .75rem; padding-top: 1.25rem; margin-top: 1.5rem; border-top: 1px solid var(--admin-border); }
+.admin-form-actions .btn { min-height: 44px; padding-inline: 1.25rem; }
+.admin-editor .offer-plan-row { background: #fff; }
+@media (max-width: 575.98px) {
+  .admin-form-section { padding: 1rem; }
+  .admin-form-actions .btn { flex: 1 1 auto; }
+  .admin-shell .navbar-brand { font-size: 1rem; }
+  .admin-shell .nav-link { text-align: left; padding: .65rem; }
+}
 .admin-table th { white-space: nowrap; font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; color: #66758a; }
 .required::after { content: ' *'; color: #b42318; }
 .field-help { display: inline-flex; align-items: center; justify-content: center; margin-left: .25rem; color: #6b7b90; cursor: help; font-size: .9rem; vertical-align: .05em; transition: color .15s ease; }

@@ -9,7 +9,7 @@ if (!$record) {
     exit;
 }
 ?>
-<div class="card admin-card mb-4"><div class="card-body p-3 p-lg-4">
+<div class="card admin-card admin-editor mb-4"><div class="card-body p-3 p-lg-4">
     <div class="d-flex flex-wrap justify-content-between gap-3 mb-3">
         <div><h2 class="h4 mb-1"><i class="bi bi-gear me-2"></i>Configuración de dominio</h2><p class="text-secondary mb-0">Edición de los datos generales del portal.</p></div>
         <button type="button" class="btn btn-outline-secondary align-self-start" onclick="$('#root-panel').empty()">Volver a Root</button>
@@ -18,7 +18,7 @@ if (!$record) {
     <form id="domain-config-form">
         <input type="hidden" name="id" value="<?=(int) $record['id_system_08']?>">
         <?php foreach (dominio_campos() as $section => $fields): ?>
-        <fieldset class="mb-4">
+        <fieldset class="admin-form-section mb-4">
             <legend class="h6 border-bottom pb-2 mb-3"><?=app_escape($section)?></legend>
             <div class="row g-3">
             <?php foreach ($fields as $key => [$label, $type, $limit, $width]):
@@ -37,7 +37,7 @@ if (!$record) {
             </div>
         </fieldset>
         <?php endforeach; ?>
-        <div class="d-flex justify-content-end gap-2">
+        <div class="admin-form-actions">
             <button type="button" class="btn btn-light" onclick="$('#root-panel').empty()">Cancelar</button>
             <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-2"></i>Guardar cambios</button>
         </div>

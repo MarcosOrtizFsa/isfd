@@ -10,7 +10,7 @@ $ayuda = static function (string $campo, string $texto): string {
         . '"><i class="bi bi-question-circle" aria-hidden="true"></i></span>';
 };
 ?>
-<div class="card admin-card mb-4"><div class="card-body p-4">
+<div class="card admin-card admin-editor mb-4"><div class="card-body p-4">
 <div class="d-flex justify-content-between"><div><h2 class="h5 mb-1">Agente IA de Neuria</h2><p class="small text-secondary mb-0">La nota generada ingresará como borrador pendiente de revisión.</p></div><button class="btn-close" onclick="$('#news-panel').empty()" aria-label="Cerrar"></button></div>
 <form id="neuria-request-form" class="row g-3 mt-1">
 <div class="col-12">

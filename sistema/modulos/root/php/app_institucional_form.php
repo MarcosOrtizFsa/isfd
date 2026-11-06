@@ -6,7 +6,7 @@ require_once __DIR__.'/../../../../lib/institucional_repositorio.php';
 $db = app_db();
 $current = (new InstitucionalRepositorio($db))->actuales();
 ?>
-<div class="card admin-card my-4"><div class="card-body p-4">
+<div class="card admin-card admin-editor my-4"><div class="card-body p-4">
 <h2 class="h4">Contenido institucional e historial</h2>
 <p class="text-secondary">Cada sección se guarda por separado. El año identifica el período; guardar publica una nueva versión y conserva las anteriores.</p>
 <?php foreach (institucional_campos() as $section => [$title, $fields]):
