@@ -1,0 +1,378 @@
+[
+  {
+    "palabra": "Agente de IA",
+    "descripcion": "Sistema autónomo capaz de percibir su entorno, tomar decisiones y ejecutar acciones para alcanzar objetivos específicos sin intervención humana constante."
+  },
+  {
+    "palabra": "Algoritmo",
+    "descripcion": "Conjunto de instrucciones o reglas ordenadas que una computadora sigue para resolver un problema o realizar una tarea."
+  },
+  {
+    "palabra": "Aprendizaje automático (Machine Learning)",
+    "descripcion": "Rama de la IA que permite a los sistemas aprender y mejorar a partir de datos sin ser programados explícitamente para cada tarea."
+  },
+  {
+    "palabra": "Aprendizaje por refuerzo (Reinforcement Learning)",
+    "descripcion": "Técnica donde un agente aprende a tomar decisiones mediante prueba y error, recibiendo recompensas o penalizaciones según sus acciones."
+  },
+  {
+    "palabra": "Aprendizaje profundo (Deep Learning)",
+    "descripcion": "Subcampo del Machine Learning que utiliza redes neuronales con múltiples capas para aprender representaciones complejas de los datos."
+  },
+  {
+    "palabra": "Arquitectura Transformer",
+    "descripcion": "Modelo de red neuronal basado en mecanismos de atención, ampliamente utilizado en modelos de lenguaje como GPT y BERT."
+  },
+  {
+    "palabra": "Atención (Attention Mechanism)",
+    "descripcion": "Mecanismo que permite a los modelos enfocarse en partes relevantes de los datos de entrada al generar una salida."
+  },
+  {
+    "palabra": "Autoencoder",
+    "descripcion": "Red neuronal que aprende a comprimir datos en una representación compacta y luego reconstruirlos, útil para reducción de dimensionalidad."
+  },
+  {
+    "palabra": "IA General (AGI)",
+    "descripcion": "Inteligencia Artificial General: sistema hipotético capaz de realizar cualquier tarea intelectual que un humano pueda hacer"
+  },
+  {
+    "palabra": "Backpropagation",
+    "descripcion": "Algoritmo de entrenamiento de redes neuronales que ajusta los pesos propagando el error hacia atrás desde la capa de salida."
+  },
+  {
+    "palabra": "BERT",
+    "descripcion": "Bidirectional Encoder Representations from Transformers: modelo de lenguaje de Google que analiza el contexto en ambas direcciones de un texto."
+  },
+  {
+    "palabra": "Bias (Sesgo)",
+    "descripcion": "Error sistemático en los resultados de un modelo que puede llevar a predicciones injustas o incorrectas, a menudo heredado de los datos de entrenamiento."
+  },
+  {
+    "palabra": "Big Data",
+    "descripcion": "Conjuntos de datos extremadamente grandes y complejos que requieren herramientas especiales para ser procesados y analizados."
+  },
+  {
+    "palabra": "Boosting",
+    "descripcion": "Técnica de ensemble que combina múltiples modelos débiles en forma secuencial para crear un modelo predictivo más fuerte"
+  },
+  {
+    "palabra": "Chatbot",
+    "descripcion": "Programa de software diseñado para simular conversaciones humanas, típicamente basado en reglas o modelos de lenguaje."
+  },
+  {
+    "palabra": "Clasificación",
+    "descripcion": "Tarea de Machine Learning que asigna etiquetas o categorías predefinidas a datos de entrada."
+  },
+  {
+    "palabra": "Clustering",
+    "descripcion": "Técnica de aprendizaje no supervisado que agrupa datos similares sin etiquetas predefinidas."
+  },
+  {
+    "palabra": "CNN (Red Neuronal Convolucional)",
+    "descripcion": "Arquitectura de red neuronal especializada en procesar datos con estructura de cuadrícula, como imágenes."
+  },
+  {
+    "palabra": "Computer Vision (Visión por Computadora)",
+    "descripcion": "Campo de la IA que entrena a las máquinas para interpretar y entender información visual del mundo real."
+  },
+  {
+    "palabra": "Corpus",
+    "descripcion": "Gran colección de textos usada para entrenar modelos de procesamiento de lenguaje natural"
+  },
+  {
+    "palabra": "Dataset (Conjunto de datos)",
+    "descripcion": "Colección organizada de datos utilizada para entrenar, validar o evaluar modelos de IA."
+  },
+  {
+    "palabra": "Diffusion Models",
+    "descripcion": "Modelos generativos que aprenden a crear datos (como imágenes) mediante un proceso de eliminación progresiva de ruido."
+  },
+  {
+    "palabra": "Dimensionalidad",
+    "descripcion": "Número de características o variables en un conjunto de datos. Alta dimensionalidad puede dificultar el aprendizaje."
+  },
+  {
+    "palabra": "Dropout",
+    "descripcion": "Técnica de regularización que desactiva aleatoriamente neuronas durante el entrenamiento para evitar el sobreajuste"
+  },
+  {
+    "palabra": "Embedding",
+    "descripcion": "Representación vectorial densa de datos (palabras, imágenes, etc.) en un espacio de menor dimensión que captura relaciones semánticas."
+  },
+  {
+    "palabra": "Ensemble",
+    "descripcion": "Técnica que combina múltiples modelos para obtener predicciones más precisas y robustas."
+  },
+  {
+    "palabra": "Entrenamiento (Training)",
+    "descripcion": "Proceso por el cual un modelo de IA ajusta sus parámetros usando datos para aprender a realizar una tarea."
+  },
+  {
+    "palabra": "Época (Epoch)",
+    "descripcion": "Una pasada completa del modelo por todo el conjunto de datos de entrenamiento durante el proceso de aprendizaje."
+  },
+  {
+    "palabra": "Explicabilidad (XAI)",
+    "descripcion": "Capacidad de un sistema de IA para explicar sus decisiones y predicciones de manera comprensible para humanos"
+  },
+  {
+    "palabra": "Feature Engineering",
+    "descripcion": "Proceso de seleccionar y transformar variables de los datos brutos para mejorar el rendimiento del modelo."
+  },
+  {
+    "palabra": "Fine-tuning",
+    "descripcion": "Proceso de ajustar un modelo preentrenado con datos específicos para adaptarlo a una tarea concreta."
+  },
+  {
+    "palabra": "Foundation Model",
+    "descripcion": "Modelo grande de IA entrenado con grandes cantidades de datos generales, adaptable a múltiples tareas."
+  },
+  {
+    "palabra": "Función de pérdida (Loss Function)",
+    "descripcion": "Medida que cuantifica cuánto difieren las predicciones del modelo respecto a los valores reales, guiando el entrenamiento"
+  },
+  {
+    "palabra": "GAN (Red Generativa Adversarial)",
+    "descripcion": "Arquitectura compuesta por dos redes neuronales (generador y discriminador) que compiten para crear datos sintéticos realistas."
+  },
+  {
+    "palabra": "GPT (Generative Pre-trained Transformer)",
+    "descripcion": "Familia de modelos de lenguaje de OpenAI capaces de generar texto coherente y realizar múltiples tareas lingüísticas."
+  },
+  {
+    "palabra": "Gradiente",
+    "descripcion": "Vector que indica la dirección y magnitud del cambio más pronunciado en una función, usado en la optimización de modelos."
+  },
+  {
+    "palabra": "Gradiente Descendente",
+    "descripcion": "Algoritmo de optimización que ajusta los parámetros del modelo moviéndose en dirección opuesta al gradiente de la función de pérdida."
+  },
+  {
+    "palabra": "Hallucination (Alucinación)",
+    "descripcion": "Fenómeno en el que un modelo de IA genera información falsa o inventada con aparente confianza."
+  },
+  {
+    "palabra": "Hiperparámetro",
+    "descripcion": "Parámetro de configuración del modelo que se establece antes del entrenamiento y controla el proceso de aprendizaje."
+  },
+  {
+    "palabra": "Heurística",
+    "descripcion": "Enfoque de resolución de problemas práctico que no garantiza optimalidad, pero produce soluciones suficientemente buenas."
+  },
+  {
+    "palabra": "IA Débil (Narrow AI)",
+    "descripcion": "Sistema de IA diseñado para realizar una tarea específica, como reconocimiento de voz o juego de ajedrez."
+  },
+  {
+    "palabra": "IA Fuerte",
+    "descripcion": "Sistema hipotético de IA con capacidades cognitivas equivalentes o superiores a las humanas en todos los dominios."
+  },
+  {
+    "palabra": "IA Generativa",
+    "descripcion": "Tipo de IA capaz de crear contenido nuevo (texto, imágenes, música, código) aprendiendo patrones de datos existentes."
+  },
+  {
+    "palabra": "Inferencia",
+    "descripcion": "Proceso de usar un modelo entrenado para hacer predicciones sobre nuevos datos."
+  },
+  {
+    "palabra": "Inteligencia Artificial (IA)",
+    "descripcion": "Campo de la informática que desarrolla sistemas capaces de realizar tareas que normalmente requieren inteligencia humana."
+  },
+  {
+    "palabra": "JSON (JavaScript Object Notation)",
+    "descripcion": "Formato ligero de intercambio de datos ampliamente usado en APIs y sistemas de IA para estructurar información"
+  },
+  {
+    "palabra": "K-means",
+    "descripcion": "Algoritmo de clustering que agrupa datos en K grupos según la similitud con los centroides de cada grupo."
+  },
+  {
+    "palabra": "Knowledge Graph (Grafo de conocimiento)",
+    "descripcion": "Representación estructurada del conocimiento como una red de entidades y sus relaciones."
+  },
+  {
+    "palabra": "KPI (Indicador Clave de Rendimiento)",
+    "descripcion": "Métrica utilizada para evaluar el éxito de un modelo de IA en alcanzar sus objetivos."
+  },
+  {
+    "palabra": "Latencia",
+    "descripcion": "Tiempo que tarda un sistema de IA en producir una respuesta desde que recibe una entrada."
+  },
+  {
+    "palabra": "LLM (Large Language Model)",
+    "descripcion": "Modelo de lenguaje de gran escala entrenado con enormes cantidades de texto, capaz de generar y comprender lenguaje natural."
+  },
+  {
+    "palabra": "LSTM (Long Short-Term Memory)",
+    "descripcion": "Tipo de red neuronal recurrente diseñada para aprender dependencias a largo plazo en secuencias de datos."
+  },
+  {
+    "palabra": "Matriz de confusión",
+    "descripcion": "Tabla que muestra las predicciones correctas e incorrectas de un modelo de clasificación para evaluar su desempeño."
+  },
+  {
+    "palabra": "Metadatos",
+    "descripcion": "Datos que describen o dan información sobre otros datos, útiles para organizar y procesar conjuntos de entrenamiento."
+  },
+  {
+    "palabra": "Modelo",
+    "descripcion": "Representación matemática aprendida de un fenómeno, resultado del proceso de entrenamiento con datos."
+  },
+  {
+    "palabra": "Multimodal",
+    "descripcion": "Sistema de IA capaz de procesar y combinar múltiples tipos de datos, como texto, imágenes y audio simultáneamente"
+  },
+  {
+    "palabra": "NLP (Procesamiento de Lenguaje Natural)",
+    "descripcion": "Campo de la IA que permite a las computadoras comprender, interpretar y generar lenguaje humano."
+  },
+  {
+    "palabra": "Neurona artificial",
+    "descripcion": "Unidad básica de una red neuronal que recibe entradas, las procesa y produce una salida mediante una función de activación."
+  },
+  {
+    "palabra": "Normalización",
+    "descripcion": "Proceso de escalar los datos para que tengan una distribución uniforme, mejorando el entrenamiento del modelo."
+  },
+  {
+    "palabra": "Objetivo (Objective Function)",
+    "descripcion": "Función matemática que un algoritmo de aprendizaje busca maximizar o minimizar durante el entrenamiento."
+  },
+  {
+    "palabra": "Overfitting (Sobreajuste)",
+    "descripcion": "Fenómeno donde un modelo aprende demasiado bien los datos de entrenamiento y falla en generalizar a datos nuevos."
+  },
+  {
+    "palabra": "Optimización",
+    "descripcion": "Proceso de ajustar los parámetros de un modelo para mejorar su rendimiento según una métrica definida."
+  },
+  {
+    "palabra": "Parámetro",
+    "descripcion": "Variable interna del modelo ajustado durante el entrenamiento para minimizar el error de predicción."
+  },
+  {
+    "palabra": "Perceptrón",
+    "descripcion": "Unidad básica de una red neuronal artificial; el modelo más simple de neurona artificial."
+  },
+  {
+    "palabra": "Pipeline",
+    "descripcion": "Secuencia estructurada de pasos de procesamiento de datos y modelos en un sistema de IA."
+  },
+  {
+    "palabra": "Prompt",
+    "descripcion": "Instrucción o entrada textual proporcionada a un modelo de lenguaje para guiar su respuesta."
+  },
+  {
+    "palabra": "Prompt Engineering",
+    "descripcion": "Arte y técnica de diseñar instrucciones efectivas para obtener respuestas óptimas de modelos de IA."
+  },
+  {
+    "palabra": "Q-Learning",
+    "descripcion": "Algoritmo de aprendizaje por refuerzo que entrena a un agente a tomar decisiones óptimas mediante una función de valor Q."
+  },
+  {
+    "palabra": "Quantización",
+    "descripcion": "Técnica que reduce la precisión numérica de los parámetros del modelo para hacerlo más eficiente sin sacrificar mucho rendimiento"
+  },
+  {
+    "palabra": "RAG (Retrieval-Augmented Generation)",
+    "descripcion": "Técnica que combina búsqueda de información externa con generación de texto para producir respuestas más precisas y actualizadas."
+  },
+  {
+    "palabra": "Red neuronal",
+    "descripcion": "Sistema computacional inspirado en el cerebro humano, compuesto por capas de neuronas artificiales interconectadas."
+  },
+  {
+    "palabra": "Regresión",
+    "descripcion": "Tarea de Machine Learning que predice valores numéricos continuos a partir de datos de entrada."
+  },
+  {
+    "palabra": "RLHF (Reinforcement Learning from Human Feedback)",
+    "descripcion": "Técnica de entrenamiento que usa retroalimentación humana para alinear los modelos de IA con preferencias y valores humanos."
+  },
+  {
+    "palabra": "RNN (Red Neuronal Recurrente)",
+    "descripcion": "Tipo de red neuronal con conexiones que forman ciclos, adecuada para procesar secuencias de datos como texto o series temporales."
+  },
+  {
+    "palabra": "Semántica",
+    "descripcion": "Estudio del significado en el lenguaje, relevante en NLP para comprender el sentido de palabras y oraciones."
+  },
+  {
+    "palabra": "Sesgo algorítmico",
+    "descripcion": "Tendencia de un sistema de IA a producir resultados sistemáticamente injustos debido a prejuicios en los datos o el diseño."
+  },
+  {
+    "palabra": "Softmax",
+    "descripcion": "Función de activación que convierte un vector de valores en una distribución de probabilidades, usada en clasificación."
+  },
+  {
+    "palabra": "Supervisado (Aprendizaje supervisado)",
+    "descripcion": "Tipo de aprendizaje donde el modelo se entrena con datos etiquetados, aprendiendo la relación entre entradas y salidas."
+  },
+  {
+    "palabra": "Temperatura (en LLMs)",
+    "descripcion": "Parámetro que controla la aleatoriedad de las respuestas de un modelo; valores altos generan respuestas más creativas."
+  },
+  {
+    "palabra": "Token",
+    "descripcion": "Unidad básica de texto (palabra, subpalabra o carácter) que los modelos de lenguaje procesan como entrada."
+  },
+  {
+    "palabra": "Transfer Learning",
+    "descripcion": "Técnica que aplica conocimiento adquirido en una tarea a otra tarea diferente pero relacionada."
+  },
+  {
+    "palabra": "Transformer",
+    "descripcion": "Arquitectura de red neuronal basada en mecanismos de atención, fundamento de los modelos de lenguaje modernos"
+  },
+  {
+    "palabra": "Underfitting (Subajuste)",
+    "descripcion": "Situación en que un modelo es demasiado simple para capturar los patrones de los datos, resultando en bajo rendimiento."
+  },
+  {
+    "palabra": "No supervisado (Aprendizaje no supervisado)",
+    "descripcion": "Tipo de aprendizaje donde el modelo descubre patrones en datos sin etiquetas predefinidas"
+  },
+  {
+    "palabra": "Validación",
+    "descripcion": "Proceso de evaluar el rendimiento del modelo usando un conjunto de datos separado del entrenamiento para ajustar hiperparámetros."
+  },
+  {
+    "palabra": "Variational Autoencoder (VAE)",
+    "descripcion": "Modelo generativo que aprende distribuciones de probabilidad sobre los datos para generar nuevas muestras."
+  },
+  {
+    "palabra": "Vector",
+    "descripcion": "Representación matemática de datos como una lista de números, fundamental para el procesamiento en modelos de IA"
+  },
+  {
+    "palabra": "Weights (Pesos)",
+    "descripcion": "Parámetros numéricos de una red neuronal que determinan la importancia de cada conexión entre neuronas."
+  },
+  {
+    "palabra": "Word2Vec",
+    "descripcion": "Técnica de NLP que convierte palabras en vectores numéricos capturando relaciones semánticas entre términos."
+  },
+  {
+    "palabra": "XAI (IA Explicable)",
+    "descripcion": "Conjunto de métodos y técnicas que hacen que los procesos y decisiones de la IA sean comprensibles para los humanos."
+  },
+  {
+    "palabra": "XGBoost",
+    "descripcion": "Algoritmo de gradient boosting de alto rendimiento, muy utilizado en competencias de ciencia de datos y aplicaciones reales"
+  },
+  {
+    "palabra": "YOLO (You Only Look Once)",
+    "descripcion": "Algoritmo de detección de objetos en tiempo real que analiza imágenes completas en una sola pasada por la red"
+  },
+  {
+    "palabra": "Zero-shot learning",
+    "descripcion": "Capacidad de un modelo para realizar tareas sin haber visto ejemplos de entrenamiento específicos de esas tareas."
+  },
+  {
+    "palabra": "Zero-shot prompting",
+    "descripcion": "Técnica de prompting en la que se pide al modelo realizar una tarea sin proporcionarle ejemplos previos."
+  }
+]

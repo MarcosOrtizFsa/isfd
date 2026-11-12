@@ -4,6 +4,7 @@ Actualizada el 4 de noviembre de 2026 contra el código hasta `50de00d`.
 
 ## Documentos principales
 
+- [Informe operacional, lógico y tecnológico con IA](INFORME_OPERACIONAL_LOGICO_TECNOLOGICO_IA.md): marco conceptual para la presentación final, flujos, tecnologías, NEURIA y colaboración humano–agente; revisión del 6 de noviembre de 2026.
 - [Manual técnico](MANUAL_TECNICO.md): arquitectura, recursos y tecnologías, APIs, IA, papel central de NEURIA, desarrollo híbrido humano/agente, datos, seguridad, operación y límites.
 - [Manual básico del administrador](MANUAL_ADMINISTRADOR.md): uso cotidiano del panel, publicación, adjuntos, catálogo, consultas, preinscripciones y moderación.
 - [Importación y despliegue en producción](../database/IMPORTACION_PRODUCCION.md): migraciones hasta 020, actualización por versión y comprobaciones.
@@ -19,6 +20,8 @@ Actualizada el 4 de noviembre de 2026 contra el código hasta `50de00d`.
 | Datos importados de referencia | [OFERTAS_IMPORTADAS_FAC.md](OFERTAS_IMPORTADAS_FAC.md) |
 | Contenido institucional versionado | [CONTENIDO_INSTITUCIONAL.md](CONTENIDO_INSTITUCIONAL.md) |
 | Autoridades | [AUTORIDADES.md](AUTORIDADES.md) |
+| Glosario institucional | [GLOSARIO.md](GLOSARIO.md) |
+| Recursos de contacto, QR y enlaces | [RECURSOS_CONTACTO.md](RECURSOS_CONTACTO.md) |
 | Videos institucionales | [VIDEOS_INSTITUCIONALES.md](VIDEOS_INSTITUCIONALES.md) |
 | Chat y moderación | [CHAT_INSTITUCIONAL.md](CHAT_INSTITUCIONAL.md) |
 | Transporte WebSocket/AJAX | [CHAT_WEBSOCKET.md](CHAT_WEBSOCKET.md) |

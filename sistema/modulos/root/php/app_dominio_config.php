@@ -54,3 +54,5 @@ $('#domain-config-form').on('submit', function (event) {
 </script>
 <div id="institutional-panel"><?php include __DIR__.'/app_institucional_form.php'; ?></div>
 <div id="authorities-panel"><?php include __DIR__.'/app_autoridades.php'; ?></div>
+<div id="glossary-panel"><?php include __DIR__.'/app_glosario.php'; ?></div>
+<div id="contact-resources-panel"><?php include __DIR__.'/app_recursos_contacto.php'; ?></div>

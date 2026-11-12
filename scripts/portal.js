@@ -1,4 +1,16 @@
 (function(){'use strict';
+  // Apertura por clic: el enlace normal en nueva pestaña queda como alternativa al popup.
+  document.addEventListener('click', function (event) {
+    var link = event.target.closest('[data-contact-resource]');
+    if (!link || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0) return;
+    var popup = window.open('about:blank', '_blank', 'popup=yes,width=1000,height=800,resizable=yes,scrollbars=yes');
+    if (popup) {
+      popup.opener = null;
+      popup.location.replace(link.href);
+      popup.focus();
+      event.preventDefault();
+    }
+  });
   document.addEventListener('click', function (event) {
     var link = event.target.closest('[data-institutional-preinscripcion]');
     if (!link || event.ctrlKey || event.metaKey || event.shiftKey || event.button !== 0) return;

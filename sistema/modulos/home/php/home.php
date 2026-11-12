@@ -8,6 +8,8 @@ require_once __DIR__ . '/../../../../lib/app.php';
 include __DIR__ . '/datos_home.php';
 include __DIR__ . '/datos_institucionales.php';
 include __DIR__ . '/ofertas_repositorio.php';
+require_once __DIR__ . '/../../../../lib/glosario.php';
+require_once __DIR__ . '/../../../../lib/recursos_contacto.php';
 
 /** Escapa cualquier valor que se imprima como texto o atributo HTML. */
 function home_escapar($valor)
@@ -231,6 +233,8 @@ $t->set_var([
     'HISTORIA_TITULO'=>home_escapar($institucion['historia_titulo']??''),
     'HISTORIA_RESUMEN'=>nl2br(home_escapar($institucion['historia_resumen']??'')),
     'HISTORIA_COMPLETA'=>$historiaHtml,
+    'GLOSARIO'=>glosario_publico_html(app_db()),
+    'RECURSOS_CONTACTO'=>recursos_contacto_html(app_db()),
     'AUTORIDADES'=>$autoridadesHtml,
     'AUTORIDADES_CLASE'=>$autoridadesHtml===''?'d-none':'',
 ]);
