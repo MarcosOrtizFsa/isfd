@@ -62,10 +62,38 @@ comando usa un bloqueo para impedir ejecuciones simultáneas.
 
 ```text
 */2 * * * * /usr/local/bin/php /RUTA-DEL-SITIO/cron/sincronizar_neuria.php >> /RUTA-PRIVADA/neuria-requests.log 2>&1
-*/5 * * * * /usr/local/bin/php /RUTA-DEL-SITIO/bin/neuria_sync.php all >> /RUTA-PRIVADA/neuria-sync.log 2>&1
 ```
 
 No activar el cron hasta validar manualmente identidad, permisos e importación.
+
+## Piloto Automático y entregas independientes (18/11/2026)
+
+La configuración de Piloto Automático se realiza exclusivamente en NEURIA. ISFD recibe todos los contenidos que la API ofrece al medio autenticado, sin filtrar por solicitud local ni configurar otro piloto.
+
+El botón **Sincronizar contenidos**, visible en Noticias aun cuando no haya solicitudes locales, y el comando **cron/sincronizar_neuria.php** utilizan ahora **NeuriaCoordinador**. Ejecutan:
+
+1. Seguimiento de solicitudes locales, incluidas las que pueden recuperarse de ERROR.
+2. Consulta paginada de /api/v1/contents con el cursor de contenidos.
+3. Consulta de /api/v1/changes para disponibilidad, suspensiones y retiros.
+
+Antes, el botón y el cron de solicitudes solo ejecutaban el primer paso. La comprobación de conexión consulta identidad y no descarga contenidos; su éxito no prueba que haya una sincronización programada.
+
+Las entregas independientes ingresan como noticias pendientes de revisión, sin exigir neuria_request_id. Los UUID evitan duplicados y la relectura conserva los campos editoriales locales. Un fallo de un flujo no impide intentar los restantes; el panel informa resultados parciales y recarga la lista para mostrar lo que sí se importó.
+
+Panel y cron comparten bloqueo con bin/neuria_sync.php. Los comandos de ese archivo siguen disponibles para diagnóstico de contenidos/cambios; con el nuevo cron completo no es necesario programar además bin/neuria_sync.php all.
+
+### Despliegue de esta corrección
+
+Subir:
+
+- sistema/modulos/noticias/php/neuria_coordinador.php
+- sistema/modulos/noticias/php/app_neuria_action.php
+- sistema/modulos/noticias/php/app_home.php
+- cron/sincronizar_neuria.php
+
+No requiere migraciones ni nuevas credenciales. Probar **Sincronizar contenidos** y verificar la lista de pendientes. Para recepción desatendida, el hosting debe tener programado el cron de arriba con la ruta PHP y del sitio reales. No se instala un cron al subir archivos ni se configura desde NEURIA.
+
+Pruebas locales: tests/neuria_autopilot_test.php usa el mock de NEURIA en 127.0.0.1:18087 y tablas temporales. Comprueba entregas paginadas sin solicitudes, deduplicación, conservación editorial, páginas vacías y bloqueo concurrente. tests/neuria_requests_test.php verifica que continúa funcionando la recuperación de ERROR.
 
 ## Eventos
 

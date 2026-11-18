@@ -21,6 +21,7 @@ $stateLabels=['pendiente'=>'Pendiente','activa'=>'Activa','suspendida'=>'Suspend
         <span class="small ms-2" data-neuria-message>Verificando conexión y credenciales.</span>
         <small class="d-block text-secondary mt-1" data-neuria-time></small>
     </div>
+    <button type="button" <?=app_permission_attrs('noticias',['A','M','E'])?> class="btn btn-sm btn-outline-primary" data-neuria-sync onclick="newsNeuriaSync()"><i class="bi bi-cloud-arrow-down me-1"></i>Sincronizar contenidos</button>
     <button type="button" class="btn btn-sm btn-outline-secondary" data-neuria-check disabled><i class="bi bi-arrow-repeat me-1"></i>Volver a comprobar</button>
 </div>
 <?php if($syncError):?><div class="alert alert-warning"><i class="bi bi-cloud-slash me-2"></i>La última sincronización de Neuria informó un error. Las noticias locales continúan operativas.</div><?php endif;?>
@@ -32,7 +33,15 @@ $stateLabels=['pendiente'=>'Pendiente','activa'=>'Activa','suspendida'=>'Suspend
 <?php if(!$news):?><tr><td colspan="6" class="text-center text-secondary py-5">No se encontraron noticias.</td></tr><?php endif;?>
 <?php foreach($news as $item):$isDeleted=$item['deleted_at']!==null;?><tr><td data-label="Noticia"><strong><?=app_escape($item['titulo'])?></strong><small class="d-block text-secondary text-truncate" style="max-width:38rem"><?=app_escape($item['bajada'])?></small></td><td data-label="Origen"><?=app_escape(ucfirst($item['origen']))?><?php if($item['archivos']):?><small class="d-block text-secondary"><?=$item['archivos']?> archivo/s</small><?php endif;?></td><td data-label="Sección"><?=app_escape($item['seccion']?:'Sin definir')?></td><td data-label="Publicación"><?=app_escape($item['publicacion_at']?:'Sin programar')?></td><td data-label="Estado"><span class="badge <?=$item['estado']==='activa'?'text-bg-success':($item['estado']==='suspendida'?'text-bg-danger':'text-bg-secondary')?>"><?=app_escape($stateLabels[$item['estado']]??$item['estado'])?></span></td><td data-label="Acciones" class="text-end"><div class="btn-group btn-group-sm"><?php if(!$isDeleted):?><button class="btn btn-outline-primary" title="Editar" onclick="cargar_post('modulos/noticias/php/app_form.php','news-panel',{id:<?=(int)$item['id']?>})"><i class="bi bi-pencil"></i></button><button <?=app_permission_attrs('noticias','E')?> class="btn btn-outline-secondary" title="Cambiar estado" onclick="newsAction('cycle',<?=(int)$item['id']?>)"><i class="bi bi-arrow-repeat"></i></button><button <?=app_permission_attrs('noticias','B')?> class="btn btn-outline-danger" title="Eliminar" onclick="newsAction('archive',<?=(int)$item['id']?>)"><i class="bi bi-trash"></i></button><?php else:?><button <?=app_permission_attrs('noticias','E')?> class="btn btn-outline-success" title="Restaurar" onclick="newsAction('restore',<?=(int)$item['id']?>)"><i class="bi bi-arrow-counterclockwise"></i></button><?php endif;?></div></td></tr><?php endforeach;?>
 </tbody></table></div></div></div></div></section>
-<script>function newsReload(){cargar_post('modulos/noticias/php/app_home.php','content_seccion',$('#news-filter').serialize())}function newsAction(action,id){if(confirm(action==='archive'?'¿Eliminar esta noticia?':'¿Confirmar el cambio?'))appAction('modulos/noticias/php/app_action.php',{action:action,id:id},newsReload)}function newsNeuriaSync(){appAction('modulos/noticias/php/app_neuria_action.php',{action:'sync'},newsReload)}$('#news-filter').on('submit',function(e){e.preventDefault();newsReload()});
+<script>function newsReload(){cargar_post('modulos/noticias/php/app_home.php','content_seccion',$('#news-filter').serialize())}function newsAction(action,id){if(confirm(action==='archive'?'¿Eliminar esta noticia?':'¿Confirmar el cambio?'))appAction('modulos/noticias/php/app_action.php',{action:action,id:id},newsReload)}function newsNeuriaSync(){
+    var button=$('[data-neuria-sync]');
+    if(button.data('busy'))return;
+    button.data('busy',true).prop('disabled',true);
+    $.ajax({url:'modulos/noticias/php/app_neuria_action.php',method:'POST',dataType:'json',data:{action:'sync',csrf_token:$('meta[name="csrf-token"]').attr('content')}})
+      .done(function(result){window.alert(result.message);newsReload();})
+      .fail(function(xhr){window.alert(xhr.responseJSON?xhr.responseJSON.message:'No se pudo sincronizar NEURIA. Volvé a intentar.');})
+      .always(function(){button.data('busy',false).prop('disabled',false);});
+}$('#news-filter').on('submit',function(e){e.preventDefault();newsReload()});
 (function () {
     // Referencia local: una respuesta tardía no modifica una nueva vista cargada por AJAX.
     var panel = $('#news-neuria-status');

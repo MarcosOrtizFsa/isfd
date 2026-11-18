@@ -16,6 +16,14 @@ if(str_starts_with((string)$path,'/api/v1/')){
         [$status,$progress]=$stages[$token]??['COMPLETADA',100];
         echo json_encode(['data'=>['id'=>'22222222-2222-4222-8222-222222222222','title'=>'Tema solicitado','status'=>$status,'progress'=>$progress,'destinations'=>$status==='COMPLETADA'?[['status'=>'COMPLETADA','content_id'=>$content['uuid'],'content_status'=>'DISPONIBLE']]:[]]]);return;
     }
+    if($path==='/api/v1/contents' && $token==='autopilot'){
+        $content['metadata']=['origin'=>'autopilot'];
+        $cursor=$_GET['cursor']??'';
+        if($cursor==='pilot-end'){echo json_encode(['data'=>[],'meta'=>['next_cursor'=>'pilot-end','has_more'=>false]]);return;}
+        if($cursor==='pilot-page-2'){$content['uuid']='33333333-3333-4333-8333-333333333333';$content['title']='Producción automática 2';}
+        echo json_encode(['data'=>[$content],'meta'=>['next_cursor'=>$cursor==='pilot-page-2'?'pilot-end':'pilot-page-2','has_more'=>$cursor!=='pilot-page-2']]);return;
+    }
+    if($path==='/api/v1/changes' && $token==='autopilot'){echo json_encode(['data'=>[],'meta'=>['next_cursor'=>'pilot-changes','has_more'=>false]]);return;}
     if($path==='/api/v1/contents'){echo json_encode(['data'=>[$content],'meta'=>['next_cursor'=>'cursor-content-1','limit'=>50,'has_more'=>false]]);return;}
     if(str_starts_with((string)$path,'/api/v1/contents/')){echo json_encode(['data'=>$content]);return;}
     if($path==='/api/v1/changes'){$types=['suspend'=>'CONTENT_SUSPENDED','reactivate'=>'CONTENT_REACTIVATED','withdraw'=>'CONTENT_WITHDRAWN'];$event=['type'=>$types[$token]??'CONTENT_AVAILABLE','content_uuid'=>$content['uuid']];if(($types[$token]??'')==='')$event['content']=$content;$events=$token==='bad-change'?[$event,['type'=>'CONTENT_SUSPENDED']]:[$event];echo json_encode(['data'=>$events,'meta'=>['next_cursor'=>'cursor-change-'.$token,'limit'=>50,'has_more'=>false]]);return;}
